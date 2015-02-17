@@ -1,0 +1,3 @@
+# https://leetcode-cn.com/problems/out-of-boundary-paths/solution/gong-shui-san-xie-yi-ti-shuang-jie-ji-yi-asrz/
+# nextgen7576's question @宫水三叶 请教宫水大佬，为什么f[i][k]赋于初始路径数的时候，要从对矩形边缘的k从1到max都赋值。k从2开始，矩形任意一格的路径数不是都从附近k=1的格子计算所得吗？这点不理解，但确实如果赋予初始路径数时，不赋到max的话，计算所有答案是不对的。因此请教大佬。谢谢！
+# isyang reply @nextgen7576 如果不对边界位置对应的所有k初始化，则会漏解。当求边界位置且K大于1时的路径数量时，原本是求4个方向的k-1的路径和，但是算法中对出界的位置是直接跳过，没参与计算的，所以就变成求剩下没有出界位置的k-1的路径和。

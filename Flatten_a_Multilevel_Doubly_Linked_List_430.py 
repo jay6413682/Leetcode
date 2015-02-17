@@ -1,0 +1,125 @@
+
+
+# Definition for a Node.
+class Node:
+    def __init__(self, val, prev, next, child):
+        self.val = val
+        self.prev = prev
+        self.next = next
+        self.child = child
+
+
+class Solution:
+    def flatten(self, head: 'Node') -> 'Node':
+        """
+        This is a simpler but less efficient solution
+        recursive 思维：假设以child 为head 的链表 flat ，如何将 flat 之后和链表和 现在这层 链表连在一起
+        https://leetcode-cn.com/problems/flatten-a-multilevel-doubly-linked-list/solution/zhong-gui-zhong-ju-fei-chang-xiang-xi-de-ti-jie-si/
+        https://leetcode-cn.com/problems/flatten-a-multilevel-doubly-linked-list/solution/gong-shui-san-xie-yi-ti-shuang-jie-di-gu-9wfz/ 
+        """
+        pointer = head
+        while pointer is not None:
+            if pointer.child is not None:
+                nxt = pointer.next
+                child_tail = child_head = self.flatten(pointer.child)
+                # reconnect curr with child head
+                pointer.next = child_head
+                pointer.child = None
+                child_head.prev = pointer
+                # Find last element in flatted child
+                while child_tail.next is not None:
+                    child_tail = child_tail.next
+                # reconnect child tail to nxt
+                child_tail.next = nxt
+                if nxt is not None:
+                    nxt.prev = child_tail
+            pointer = pointer.next
+        return head
+        """
+        # my solution，上面解的优化：. https://leetcode-cn.com/problems/flatten-a-multilevel-doubly-linked-list/solution/gong-shui-san-xie-yi-ti-shuang-jie-di-gu-9wfz/
+        # https://leetcode-cn.com/problems/flatten-a-multilevel-doubly-linked-list/solution/bian-ping-hua-duo-ji-shuang-xiang-lian-b-383h/
+        # dfs. dfs（） flat 以child 为头的链表 返回 flat 之后 tail，如何在现在这层链表连起来
+        def dfs(head):
+            # return the "real" tail from the head, it could be the tail of the lowest level
+            if not head:
+                return
+            node = head
+            while node:
+                if node.child:
+                    tail = dfs(node.child)
+                    # print(tail.val, node.val)
+                    orig_next = node.next
+                    if orig_next:
+                        orig_next.prev = tail
+                        tail.next = orig_next
+                    node.next = node.child
+                    node.next.prev = node
+                    node.child = None
+                    node = orig_next
+                else:
+                    tail = node
+                    node = node.next
+            '''
+            x = head
+            while x:
+                print(x.val)
+                x = x.next
+            print('{}\n'.format(node.val))
+            '''
+            return tail
+        dfs(head)
+        # print(head.val, head.next.val, head.next.next.val)
+        return head
+        """
+
+
+class Solution2:
+    """
+    recursive dfs solution, 类似树的前序遍历
+    https://leetcode-cn.com/problems/flatten-a-multilevel-doubly-linked-list/solution/bian-ping-hua-duo-ji-shuang-xiang-lian-b-n4gy/
+    """
+    def flatten_dfs(self, prev: 'Node', curr: 'Node') -> 'Node':
+        if curr is None:
+            return prev
+        prev.next = curr
+        curr.prev = prev
+        nxt = curr.next
+        tail = self.flatten_dfs(curr, curr.child)
+        curr.child = None
+        return self.flatten_dfs(tail, nxt)
+
+    def flatten(self, head: 'Node') -> 'Node':
+        if head is None:
+            return head
+        dummpy_head = Node(None, None, head, None)
+        self.flatten_dfs(dummpy_head, head)
+        dummpy_head.next = None
+        head.prev = None
+        return head
+
+
+class Solution3:
+
+    def flatten(self, head: 'Node') -> 'Node':
+        """ iterative dfs，类似树的遍历，不是bfs 因为是stack.pop().not stack.popleft()
+        Yipsen ：  https://leetcode-cn.com/problems/flatten-a-multilevel-doubly-linked-list/solution/bian-ping-hua-duo-ji-shuang-xiang-lian-b-383h/ """
+        if not head:
+            return head
+        stack = []
+        stack.append(head)
+        dummpy_head = Node(None, None, head, None)
+        prev = dummpy_head
+        curr = head
+        while stack:
+            curr = stack.pop()
+            prev.next = curr
+            curr.prev = prev
+            if curr.next:
+                stack.append(curr.next)
+            if curr.child:
+                stack.append(curr.child)
+                curr.child = None
+            prev = curr
+        dummpy_head.next = None
+        head.prev = None
+        return head
