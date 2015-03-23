@@ -3,6 +3,8 @@ Created on Mar 19, 2015
 
 @author: ljiang
 '''
+
+import itertools
 class Str_Str_5:
     def __init__(self,needle,haystack):
         self.needle=needle
@@ -36,6 +38,16 @@ class Str_Str_5:
             else:
                 return haystack_height[0]
             
+    
+    def strStr2(self):
+        for i in itertools.count():
+            for j in itertools.count():
+                if j==len(self.needle):
+                    return i
+                if i+j==len(self.haystack):
+                    return False
+                if self.needle[j]!=self.haystack[i+j]:
+                    break
                              
 
                     
