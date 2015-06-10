@@ -2,6 +2,8 @@
 Similar to Question [6. Reverse Words in a String], but with the following constraints:
 The input string does not contain leading or trailing spaces and the words are always separated by a single space
 Could you do it in-place without allocating extra space?
+
+challenge: Rotate an array to the right by k steps in-place without allocating extra space. For instance, with k = 3, the array [0, 1, 2, 3, 4, 5, 6] is rotated to [4, 5, 6, 0, 1, 2, 3].
 '''
 
 class reverse_str_word_by_word_7:
@@ -26,5 +28,8 @@ class reverse_str_word_by_word_7:
             
         return words
 
-            
+    def rotate_words(self,words,k):
+        words=self.reverse_string(words)
+        words=self.reverse_string(words[:k])+self.reverse_string(words[k:len(words)])
+        return words
         
