@@ -10,14 +10,14 @@ Output: index1=1, index2=2
 '''
 import sys
 from copy import deepcopy
-'''
-def twoSum(num, target):
+
+def twoSum2(num, target):
     try:
         i=0
         j=len(num)-1
         while i<j:
             if num[i]+num[j] < target:
-                j+=1
+                i+=1
             elif num[i]+num[j]== target:
                 return (i+1,j+1)
             else:
@@ -26,13 +26,13 @@ def twoSum(num, target):
     except Exception,details:
         print details
         sys.exit()
-'''
+
 def twoSum(nums, target):
     try:
         for i in xrange(len(nums)-1):    
             index=binarySearch(target-nums[i], nums)        
             if type(index) is int:
-                return (i,index)
+                return (i+1,index+1)
     except Exception,details:
         print details
         sys.exit()

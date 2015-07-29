@@ -7,7 +7,7 @@ import pytest
 import sys
 from Two_Sum_3 import *
 #pytest fixture example
-@pytest.fixture(scope="function",params=[2])
+@pytest.fixture(scope="function",params=[0,1,2])
 def config_module(request):
     try:
         print ("setup_module      module:%s" % __name__)
