@@ -56,12 +56,19 @@ class reverse_str_word_by_word_6:
         return reversed_words
                 
     def reverse3(self):
+        for c in self.words:
+            if not (c.isalpha() or c==" "):
+                return False
+        self.words=self.words.strip(' \t\n')
         i=len(self.words)-1
         start=len(self.words)-1
         end=len(self.words)-1
         words_list=[]
         reversed_words=""
         while i >=0:
+            if i==0:
+                words_list.append(self.words[start:end+1])
+                break
             if self.words[i]==" ":
                 if start!=end:
                     words_list.append(self.words[start+1:end+1])
@@ -78,5 +85,42 @@ class reverse_str_word_by_word_6:
                 reversed_words=reversed_words+" "+word
             j+=1
         return reversed_words
-        
+    
+    #rewrite reverse3
+    def reverse4(self):
+        for c in self.words:
+            if not (c.isalpha() or c==" "):
+                return False
+        self.words=self.words.strip(' \t\n')
+        i=len(self.words)-1
+        start=len(self.words)-1
+        end=len(self.words)-1
+        #words_list=[]
+        reversed_words=""
+        while i >=0:
+            if self.words[i]==" " or i==0:
+                if i==0:
+                    reversed_words=reversed_words+" "+self.words[start:end+1]
+                    break
+                if start!=end:
+                    #words_list.append(self.words[start+1:end+1])
+                    if end==len(self.words)-1:
+                        reversed_words=self.words[start+1:end+1]
+                    else:
+                        reversed_words=reversed_words+" "+self.words[start+1:end+1]
+                start-=1
+                end=start
+            else:
+                start-=1
+            i-=1
+        '''
+        j=0
+        for word in words_list:
+            if j==0:
+                reversed_words=word
+            else:
+                reversed_words=reversed_words+" "+word
+            j+=1
+        '''
+        return reversed_words    
         

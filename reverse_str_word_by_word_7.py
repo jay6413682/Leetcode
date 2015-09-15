@@ -1,3 +1,4 @@
+
 '''
 Similar to Question [6. Reverse Words in a String], but with the following constraints:
 The input string does not contain leading or trailing spaces and the words are always separated by a single space

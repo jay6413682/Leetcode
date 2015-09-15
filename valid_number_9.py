@@ -9,6 +9,7 @@ class valid_number_9:
         pass
     def valid_num(self,num):
         num=num.strip(" ")
+        dot_count=0
         #sign=0
         if num=="":
             return False
@@ -17,6 +18,10 @@ class valid_number_9:
         elif num[0]=='+' or num[0]=='-':
             num=num.lstrip(num[0])
         for i in num:
+            if i=='.':
+                dot_count+=1
+                if dot_count>1:
+                    return False
             if not (i.isdigit() or i=='.'):
                 return False            
         return True

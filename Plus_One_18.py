@@ -70,3 +70,14 @@ class Plus_One_18:
 
         return new_lst    
     
+    def Plus_One_5(self,lst):
+        for i in xrange(len(lst)-1,-1,-1):
+            if lst[i]<9:
+                lst[i]=lst[i]+1
+                return lst
+            else:
+                lst[i]=0
+        lst.append(0)
+        lst[0]=1
+        return lst
+    

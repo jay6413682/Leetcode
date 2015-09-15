@@ -39,4 +39,21 @@ class Longest_Substring_with_At_Most_Two_Distinct_Characters_11:
                 i+=1
                 
         return max_len
-        
+    
+    def Longest_Substring_with_At_Most_Two_Distinct_Characters_3(self,s):
+        i = 0
+        j = -1
+        maxLen = 0
+        for k in xrange(1,len(s)):
+            if (s[k] == s[k - 1]):
+                continue
+            if (j >= 0 and s[j] != s[k]):
+                if k-i>maxLen:
+                    maxLen=k-i
+                i = j + 1 
+            j = k - 1
+        if maxLen==0:
+            maxLen=len(s)
+            
+        return maxLen
+    

@@ -49,6 +49,20 @@ class Str_Str_5:
                     return False
                 if self.needle[j]!=self.haystack[i+j]:
                     break
+    
+    #brute force 4: O(n^2); the logic is almost the same as brute force 2
+    def strStr5(self):
+        for i in xrange(0,len(self.haystack)+1):
+            for j in xrange(0,len(self.needle)+1):
+                if j == len(self.needle):
+                    return i
+                if i+j==len(self.haystack):
+                    return False
+
+                if self.haystack[i+j]!=self.needle[j]:
+                    break
+               
+        return False
                              
     #brute force 3; slice makes copies so the space complexity is high
     def strStr3(self):
