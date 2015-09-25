@@ -25,6 +25,17 @@ class LinkedList:
         new_node=Node(value)
         new_node.nxt=self.head_node
         self.head_node=new_node
+    
+    def append(self, value):
+        new_node = Node(value)
+        tail_node = self.traverse()
+        tail_node.nxt = new_node
+        
+    def traverse(self):
+        curr = self.head_node
+        while curr.nxt != None:
+            curr = curr.nxt
+        return curr
         
     def size(self):
         current_node=self.head_node
@@ -57,10 +68,3 @@ class LinkedList:
                 break
             prev_node=current  
             current=current.nxt
-            
-              
-            
-        
-                
-        
-        
