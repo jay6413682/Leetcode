@@ -61,6 +61,14 @@ class Solution3:
         应用 区间最小（最大）值问题。
         解 https://leetcode-cn.com/problems/sliding-window-maximum/solution/hua-dong-chuang-kou-zui-da-zhi-by-leetco-ki6m/ 
         图解： https://leetcode-cn.com/problems/sliding-window-maximum/solution/you-xian-dui-lie-zui-da-dui-dan-diao-dui-dbn9/
+        在上述滑动窗口形成及移动的过程中，我们注意到元素是从窗口的右侧进入的，然后由于窗口大小是固定的，因此多余的元素是从窗口左侧移除的。 一端进入，另一端移除，这不就是队列的性质吗？所以，该题目可以借助队列来求解。
+        至此，该题目的求解思路就清晰了，具体如下：
+
+        1. 遍历给定数组中的元素，如果队列不为空且当前考察元素大于等于队尾元素，则将队尾元素移除。直到，队列为空或当前考察元素小于新的队尾元素；
+        2. 当队首元素的下标小于滑动窗口左侧边界left时，表示队首元素已经不再滑动窗口内，因此将其从队首移除。
+        3. 由于数组下标从0开始，因此当窗口右边界right+1大于等于窗口大小k时，意味着窗口形成。此时，队首元素就是该窗口内的最大值。
+:
+        https://leetcode.cn/problems/sliding-window-maximum/solution/dong-hua-yan-shi-dan-diao-dui-lie-239hua-hc5u/
         时间复杂度：O(n)O(n)，其中 nn 是数组 \textit{nums}nums 的长度。每一个下标恰好被放入队列一次，并且最多被弹出队列一次，因此时间复杂度为 O(n)O(n)。
         空间复杂度：O(k)O(k)。与方法一不同的是，在方法二中我们使用的数据结构是双向的，因此「不断从队首弹出元素」保证了队列中最多不会有超过 k+1k+1 个元素，因此队列使用的空间为 O(k)O(k)。
 
@@ -102,3 +110,79 @@ class Solution3:
         return res
 
 
+
+from collections import deque
+
+class MonoDecQueue(object):
+    """ 单调递减队列 implementation 1：https://leetcode.cn/problems/sliding-window-maximum/solution/dan-diao-dui-lie-by-labuladong/ push and pop value
+    为什么pop 不用 while loop ： slyfox1201: pop:在元素入队时，是按照下标i入队的，因此队列中剩余的元素，其下标一定是升序的。窗口大小不变，最先被排除出窗口的，一直是下标最小的元素，设为r。元素r在队列中要么是头元素，要么不存在。
+    为什么 self.queue[-1] < val， 而不是<=
+    daping3：恰恰相反，能安全地pop_front是因为窗口中的最大值有重复时保留重复，哪里唯一了...
+    Alexhanbing：比当前小的元素才继续往下压扁，大于等于的都会继续压，会存在重复元素，所以是单调队列，不是严格单调
+    这样做的话，push时如果self.queue[-1] == val，self.queue[-1] 会保留在queue 当中，因为它现在还在window当中，只有当它不在window中时（pop的时候），再把它pop
+    """
+    def __init__(self):
+        self.queue = deque()
+
+    def push(self, val):
+        while self.queue and self.queue[-1] < val:
+            self.queue.pop()
+        self.queue.append(val)
+
+    def max(self):
+        return self.queue[0]
+    
+    def pop(self, val):
+        if self.queue and self.queue[0] == val:
+            self.queue.popleft()
+
+class MonoDecQueue2(object):
+    """ 单调递减队列 implementation 2：https://www.jianshu.com/p/e59d51e1eef5 和 https://leetcode.cn/problems/sliding-window-maximum/solution/dan-diao-dui-lie-by-labuladong/ push and pop index
+    这个更好理解，pop用了while loop
+    为什么 self.queue[-1] < val， 而不是<=
+    daping3：恰恰相反，能安全地pop_front是因为窗口中的最大值有重复时保留重复，哪里唯一了...
+    Alexhanbing：比当前小的元素才继续往下压扁，大于等于的都会继续压，会存在重复元素，所以是单调队列，不是严格单调
+    这样做的话，push时如果self.queue[-1] == val，self.queue[-1] 会保留在queue 当中，因为它现在还在window当中，只有当它不在window中时（pop的时候），再把它pop
+    """
+    def __init__(self, nums):
+        self.nums = nums
+        self.queue = deque()
+
+    def push(self, i):
+        while self.queue and self.nums[self.queue[-1]] < self.nums[i]:
+            self.queue.pop()
+        self.queue.append(i)
+
+    def max(self):
+        return self.nums[self.queue[0]]
+
+    def pop(self, i):
+        if self.queue and self.queue[0] <= i:
+            self.queue.popleft()
+
+class Solution4:
+    def maxSlidingWindow(self, nums: List[int], k: int) -> List[int]:
+        """ 最好理解，把window实时压入单调递减队列，然后取队列max值（queue[0]]） """
+        res = []
+        '''
+        q = MonoDecQueue()
+        for i, num in enumerate(nums):
+            if i < k - 1:
+                q.push(num)
+            else:
+                q.push(num)
+                res.append(q.max())
+                q.pop(nums[i - k + 1])
+            #print(q.queue)
+        '''
+        q = MonoDecQueue2(nums)
+        # print(q.queue)
+        for i, num in enumerate(nums):
+            if i < k - 1:
+                q.push(i)
+            else:
+                q.push(i)
+                res.append(q.max())
+                q.pop(i - k + 1)
+            #print(q.queue)
+        return res

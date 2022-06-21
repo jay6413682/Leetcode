@@ -1,6 +1,6 @@
 class Solution:
     def mctFromLeafValues(self, arr: List[int]) -> int:
-        """ dp/类似1039题 https://leetcode.com/discuss/general-discussion/458695/Dynamic-Programming-Patterns#Minimum-(Maximum)-Path-to-Reach-a-Target
+        """ dp/类似1039题 https://leetcode.com/discuss/general-discussion/458695/Dynamic-Programming-Patterns#Merging-Intervals
         解法：https://leetcode-cn.com/problems/minimum-cost-tree-from-leaf-values/solution/xiang-xi-jie-shi-dong-tai-gui-hua-dan-diao-zhan-ji/
         https://leetcode-cn.com/problems/minimum-cost-tree-from-leaf-values/solution/java-dp-by-ke-xue-jia-12/
         python解https://leetcode-cn.com/problems/minimum-cost-tree-from-leaf-values/solution/dong-tai-gui-hua-dan-diao-zhan-python3-by-smoon1-2/
