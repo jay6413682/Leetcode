@@ -2,7 +2,7 @@
 
 class Solution:
     def maxProduct(self, words: List[str]) -> int:
-        """ 暴力法 https://leetcode-cn.com/problems/maximum-product-of-word-lengths/solution/zui-da-dan-ci-chang-du-cheng-ji-by-leetcode/ """
+        """ 暴力法 https://leetcode.cn/problems/maximum-product-of-word-lengths/solution/zui-da-dan-ci-chang-du-cheng-ji-by-leetc-lym9/ """
         len_product = 0
         i = 0
         n = len(words)

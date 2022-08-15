@@ -28,6 +28,7 @@ class Solution2:
         while mask & a_xor_b != mask:
             # 找到第一位不是0的那个数
             mask <<= 1
+        # mask = a_xor_b & (-a_xor_b)
         a = 0
         b = 0
         for num in nums:
@@ -37,3 +38,17 @@ class Solution2:
             else:
                 b ^= num
         return [a, b]
+        """
+        # 下面这种想利用 a ^ b = c ->  a ^ c = b 做法不对，比如 [10,10,5,5,9,6] ， 如果10 ^ 5 = 9 ^ 6 ，就有可能得到10 , 5
+        axorb = 0
+        for i in nums:
+            axorb ^= i
+        print(axorb)
+        for j in nums:
+            b = j ^ axorb
+            print(b, j)
+            if b in nums:
+                res = [j, b]
+                break
+        return res
+        """

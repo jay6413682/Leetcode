@@ -108,3 +108,34 @@ class Solution3:
                 i += 1
             return res
         return dfs(s, 0)
+
+
+class Solution4:
+    def decodeString(self, s: str) -> str:
+        """ 我的双栈法，与 https://leetcode.cn/problems/decode-string/solution/zhan-de-ji-yi-nei-ceng-de-jie-ma-liao-bie-wang-lia/ 不同 """
+        nums = []
+        chs = []
+        i = 0
+        while i < len(s):
+            c = s[i]
+            if c.isdigit():
+                tmp = ''
+                while s[i].isdigit():
+                    tmp += s[i]
+                    i += 1
+                nums.append(int(tmp))
+            elif c == ']':
+                tmp = ''
+                while chs:
+                    popped = chs.pop()
+                    if popped == '[':
+                        break
+                    tmp = popped + tmp
+                num = nums.pop()
+                chs.append(num * tmp)
+                i += 1
+            else:
+                chs.append(c)
+                i += 1
+            #print(chs, nums)
+        return ''.join(chs)

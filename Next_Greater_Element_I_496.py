@@ -1,5 +1,49 @@
 from typing import List
 
+class Solution1:
+    def nextGreaterElement(self, nums1: List[int], nums2: List[int]) -> List[int]:
+        """ 单调栈，类似 https://leetcode.cn/problems/next-greater-element-i/solution/dong-hua-yan-shi-dan-diao-zhan-496xia-yi-ql65/ 和 https://leetcode.cn/problems/next-greater-element-i/solution/gong-shui-san-xie-yi-ti-shuang-jie-bian-n6nwz/
+
+        如果正序遍历，每一个循环，stack 中的数是 nums[i] 左侧比它大的 数，同时单调递减：这个更好理解, 记这个
+        如果逆序遍历，每一个循环，stack 中的数是 nums[i] 右侧比它大的 数，同时单调递减：在头脑中想象，栈就是从右向左由高到低排队的人（相当于栈中数字左右翻转），当nums[i] 大于队中矮的人（栈顶元素），矮人弹出，直到队中都比它高，它再入栈 
+        
+        """
+        def sequential_get_next_greater_element_map(nums):
+            stack = []
+            # num -> index of next greater element
+            mapping = {}
+            for i in range(len(nums)):
+                while stack and nums[stack[-1]] < nums[i]:
+                    popped_i = stack.pop()
+                    mapping[nums[popped_i]] = i
+                stack.append(i)
+            return mapping
+
+        def reversal_get_next_greater_element_map(nums):
+            stack = []
+            # num -> index of next greater element
+            mapping = {}
+            for i in range(len(nums) - 1, -1, -1):
+                while stack and nums[stack[-1]] <= nums[i]:
+                    stack.pop()
+                if stack:
+                    mapping[nums[i]] = stack[-1]
+                stack.append(i)
+            return mapping
+
+        #next_greater_element_map = sequential_get_next_greater_element_map(nums2)
+        next_greater_element_map = reversal_get_next_greater_element_map(nums2)
+        # print(next_greater_element_map)
+        res = []
+        for num in nums1:
+            nums2_i = next_greater_element_map.get(num)
+            # print(nums2_i)
+            if nums2_i:
+                res.append(nums2[nums2_i])
+            else:
+                res.append(-1)
+        return res
+
 
 class Solution:
     def nextGreaterElement(self, nums1: List[int], nums2: List[int]) -> List[int]:

@@ -120,3 +120,52 @@ class Solution3:
                     res.append(curr.val)
                     curr = curr.right
         return res
+
+
+class Solution:
+    def inorderTraversal(self, root: Optional[TreeNode]) -> List[int]:
+        """ 麻烦，不要用，但是可以帮助理解call stack和 递归迭代转化。完全根据call stack，调用栈 定义：https://zhuanlan.zhihu.com/p/71168084 ，以及下面的递归法 写成：
+        def dfs(root, res):
+            if not root:
+                return
+            if root.left:
+                dfs(root.left, res)
+            res.append(root.val)
+            if root.right:
+                dfs(root.right, res)
+        res = []
+        dfs(root, res)
+        return res
+        可以扩展到 preorder，postorder traversal
+        """
+
+        if not root:
+            return []
+        res = []
+        # -1: the location in the original function calling inorderTraversal, 0: beginning of dfs, 1: after dfs(left), 2: after dfs(right)
+        addr = 0
+        stack = [(root, -1)]
+        while True:
+            # 如果运行在dfs 开始处，把 parameter ：root.left 和 return address ：1，压入栈
+            while root.left and addr != 2 and addr != 1:
+                stack.append((root.left, 1))
+                root = root.left
+            # 如果不是运行在dfs 结束处，把root.val 加入结果
+            if addr != 2:
+                root, _ = stack[-1]
+                res.append(root.val)
+            if addr != 2 and root.right:
+                # 如果不是运行在结尾处 ，把root.left 和 2 压入栈
+                stack.append((root.right, 2))
+                # 当前地址设成 dfs 开始处
+                addr = 0
+                root = root.right
+            else:
+                # 如果已经到结尾 或者 root.right is not None，出栈，同时当前地址设成 弹出的 返回地址
+                _, addr = stack.pop()
+                if addr == -1:
+                    # 如果返回地址是 -1 说明整个过程已结束
+                    break
+                # 此时的root 为 栈顶值 - 返回之后的root 值
+                root, _ = stack[-1]
+        return res

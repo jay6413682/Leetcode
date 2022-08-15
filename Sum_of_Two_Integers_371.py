@@ -11,19 +11,23 @@ class Solution:
     """
     def getSum(self, a: int, b: int) -> int:
         # my solution:
-        a = a & 0xffff
-        b = b & 0xffff
+        # 转化为无符号整数, 注意 如果 a 或 b 是 负数，比如 a 是 -1 (补码 0xffff...ffff ) , & 0xffff 就转化为 0x0000...0000ffff保留低位, 假设b是 0，a + b是0x0000...0000ffff，由于大于最大和2000，所以必然是负数，所以先^ 0xffff -> 0x0000...00000000, 再取反 -> 0xffff...ffff
+        # 选择0xffff （0xfff就够了其实） 的原因是可以保留负数的高位的1s，比如 a 如果为正数最大1000，那么-1 & 0xffff 后得到的0x0000...0000ffff 由于大于1000所以必然是负数，所以最后可以通过~(raw_sum ^ 0xffff)，先低位取反，再全部取反 -> 最终效果是低位不变 （原本最开始低位就保留了，全是1），高位取反（变回1）
+        a = a & 0xfff # 0xffff is ok too
+        b = b & 0xfff
         # print(bin(a), bin(b))
-        carry = ((a & b) << 1) & 0xffff
+        carry = ((a & b) << 1) & 0xfff  # 把左侧溢出0xfff 的1 去掉，因为无论 怎样 a + b 都不会超出0xfff，而且carry 相当于一个加数，跟a，b 一样
         raw_sum = a ^ b
         # print(bin(raw_sum), bin(carry))
         while carry:
+            # 如果进位结果仍不是0，不断地跟 进位结果 做 无进位加法
             temp_sum = raw_sum ^ carry
-            carry = ((raw_sum & carry) << 1) & 0xffff
+            # 同时跟进位结果 算出 是否仍需 进位
+            carry = ((raw_sum & carry) << 1) & 0xfff # 如果不& 0xfff，carry 有可能变成0x1000(a = -1, b = 1), 此时raw_sum 为0x000，下一步temp_sum就变成 0x1000。。。
             raw_sum = temp_sum
             # print(bin(sum_res), bin(carry))
-        # if raw_sum >= 0x8000 it is at least 最高位是1，所以是负数
-        return raw_sum if raw_sum < 0x8000 else ~(raw_sum ^ 0xffff)
+        # a+b 最大 2000 < 2 ** 11, if raw_sum >= 0x800 (2 ** 11) it is at least 最高位是1，所以是负数
+        return raw_sum if raw_sum < 0x800 else ~(raw_sum ^ 0xfff)
         '''
         a &= 0xffffffff
         b &= 0xffffffff

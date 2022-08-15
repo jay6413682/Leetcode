@@ -49,3 +49,28 @@ class Solution2:
             else:
                 stack.append(int(token))
         return stack.pop()
+        '''
+        # my another try
+        stack = deque()
+        for t in tokens:
+            if t.lstrip("-").isdigit():
+                stack.append(int(t))
+            else:
+                num_right = stack.pop()
+                num_left = stack.pop()
+                if t == '+':
+                    stack.append(num_left + num_right)
+                elif t == '/':
+                    d = num_left / num_right
+                    if d < 0:
+                        d = ceil(d)
+                    else:
+                        d = int(d)
+                    stack.append(d)
+                elif t == '*':
+                    stack.append(num_left * num_right)
+                else:
+                    stack.append(num_left - num_right)
+            # print(stack)
+        return stack.pop()
+    

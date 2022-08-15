@@ -189,3 +189,43 @@ class Solution3:
             return sum(res)
         queue = deque(s)
         return dfs(queue)
+
+
+class Solution4:
+    def _cal_stack(self, stack):
+        num = 0
+        total = 0
+        digits_count = 0
+        while stack:
+            popped = stack.pop()
+            if popped == '(':
+                break
+            if popped.isdigit() or popped.lstrip('-').isdigit():
+                num = int(popped) * (10 ** digits_count) + num
+                digits_count += 1
+            elif popped == '-':
+                num = -num
+                total += num
+                num = 0
+                digits_count = 0
+            elif popped == '+':
+                total += num
+                num = 0
+                digits_count = 0
+        total += num
+        stack.extend(str(total).split())
+        #print(stack, total)
+
+    def calculate(self, s: str) -> int:
+        """ My solution: 单stack 解法 """
+        stack = []
+        for ch in s:
+            if ch == ' ':
+                continue
+            elif ch != ')':
+                stack.append(ch)
+            else:
+                self._cal_stack(stack)
+        #print(stack)
+        self._cal_stack(stack)
+        return int(stack.pop())
