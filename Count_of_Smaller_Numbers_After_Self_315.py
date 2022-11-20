@@ -4,6 +4,142 @@
 # 复杂度https://leetcode-cn.com/problems/count-of-smaller-numbers-after-self/solution/ji-suan-you-ce-xiao-yu-dang-qian-yuan-su-de-ge-s-7/：时间复杂度：我们梳理一下这个算法的流程，这里离散化使用哈希表去重，然后再对去重的数组进行排序，时间代价为 O(n \log n)O(nlogn)；初始化树状数组的时间代价是 O(n)O(n)；通过值获取离散化 \rm idid 的操作单次时间代价为 O(\log n)O(logn)；对于每个序列中的每个元素，都会做一次查询 \rm idid、单点修改和前缀和查询，总的时间代价为 O(n \log n)O(nlogn)。故渐进时间复杂度为 O(n \log n)O(nlogn)。
 # 空间复杂度：这里用到的离散化数组、树状数组、哈希表的空间代价都是 O(n)O(n)，故渐进空间复杂度为 O(n)O(n)。
 
+class BinaryIndexedTree(object):
+    """ 树状数组 binary indexed tree ，Fenwick Tree  https://leetcode.cn/problems/count-of-smaller-numbers-after-self/solution/shu-zhuang-shu-zu-by-liweiwei1419/ 
+
+    性质：
+    C 数组 index 的二进制表示的最低位的 1 和 后面的 0 转化成十进制，就是 index 对应 C 节点管理的A 节点个数 （更重要）
+    C 数组 index 的二进制表示的最低位 1 后面的 0 的个数决定了，当前结点在第几层
+
+    """
+    def __init__(self, size):
+        self.size = size
+        # C数组：
+        self.data = [0 for _ in range(size + 1)]
+
+    def update(self, i, delta):
+        # 单点更新 my recursive solution
+        if i > self.size:
+            return
+        self.data[i] += delta
+        # 子节点到父节点路径唯一
+        # 子节点 index + its lowbit = 父节点 index
+        parent_i = i + (i & (-i))
+        self.update(parent_i, delta)
+    
+    def prefix_sum(self, i):
+        # 查询前缀和 ， my recursive solution
+        if i <= 0 :
+            return 0
+        lowbit = i & (-i)
+        # index 进行二进制分解，可以转化成 多个100... （lowbit） 形式的 二进制数 之和，而index 正好是 管理的A 节点个数
+        # 另外 已知 index 的二进制表示的最低位的 1 和 后面的 0 转化成十进制，就是 index 对应 C 节点管理的A 节点个数 
+        # 所以每一次 index - lowbit ，prefix sum 就 + C[index]
+        next_i = i - lowbit
+        return self.prefix_sum(next_i) + self.data[i]
+
+
+
+class Solution:
+    def countSmaller(self, nums: List[int]) -> List[int]:
+        """
+        复杂度分析 ： https://leetcode.cn/problems/count-of-smaller-numbers-after-self/solution/ji-suan-you-ce-xiao-yu-dang-qian-yuan-su-de-ge-s-7/
+
+    假设题目给出的序列长度为 n
+
+    时间复杂度：我们梳理一下这个算法的流程，这里离散化使用哈希表去重，然后再对去重的数组进行排序，时间代价为 O(nlogn)；初始化树状数组的时间代价是 O(n)；通过值获取离散化 id 的操作单次时间代价为 O(logn)；对于每个序列中的每个元素，都会做一次查询 id、单点修改和前缀和查询，总的时间代价为 O(nlogn)。故渐进时间复杂度为 O(nlogn)。
+    空间复杂度：这里用到的离散化数组、树状数组、哈希表的空间代价都是 O(n)，故渐进空间复杂度为 O(n)。
+        """
+        # A(i): 大小排名为i的元素的出现个数 (排名1为最小的树)
+        # C(i): 对应的binary indexed tree
+        size = len(nums)
+        s = list(set(nums))
+        s_size = len(s)
+        tree = BinaryIndexedTree(size)
+        # 用 heap 和 hashmap 来 离散化
+        heapify(s)
+        rank = 1
+        rank_map = {}
+        while s:
+            smallest = heappop(s)
+            rank_map[smallest] = rank
+            rank += 1
+        res = [None] * size
+        for i in range(size - 1, -1, -1):
+            rank = rank_map[nums[i]]
+            #print(rank, i, nums[i])
+            res[i] = tree.prefix_sum(rank - 1)
+            tree.update(rank, 1)
+        return res
+
+
+class Solution:
+    def countSmaller(self, nums: List[int]) -> List[int]:
+        """ inversion pair 逆序对 merge sort 归并排序 my latest solution 
+        根据逆序对解法一 数出每一个数前面有多少个数比它大：左大右小且右侧没有iterate完，count += (mid - i + 1) -> 左大右小且右侧没有iterate完，前面比它大的每一个数count + 1
+        """
+        n = len(nums)
+        count = [0] * n
+        # 也可以 创建 index_nums = [(i, nums[i]) for i in range(n)]: 一种可行的办法是：把「下标」和「数值」绑在一起进行归并排序，在一些编程语言中提供了 Tuple 和 Pair 这样的类可以实现，也可以自己创建一个类。https://leetcode.cn/problems/count-of-smaller-numbers-after-self/solution/gui-bing-pai-xu-suo-yin-shu-zu-python-dai-ma-java-/ 
+        # 或者不用 排序 nums 而是 只排序 indexes
+
+        index_nums = [i for i in range(n)]
+        def merge_sort(nums, left, right, index_nums):
+            # special case
+            nonlocal count
+            if left == right:
+                return
+            mid = (left + right) // 2
+            # divide
+            merge_sort(nums, left, mid, index_nums)
+            merge_sort(nums, mid + 1, right, index_nums)
+
+            if nums[mid] <= nums[mid + 1]:
+                return
+            
+            i = left
+            j = mid + 1
+            tmp = nums.copy()
+            index_nums_copy = index_nums.copy()
+            k = i
+            while i <= mid and j <= right:
+                if nums[i] > nums[j]:
+                    # 左大
+                    tmp[k] = nums[j]
+                    for m in range(i, mid + 1):
+                        count[index_nums[m]] += 1
+                    #count += (mid - i + 1)
+                    index_nums_copy[k] = index_nums[j]
+                    j += 1
+                    #print('>',count, k,j, left, mid, right, (j - (mid + 1)))
+                else:
+                    # 左小
+                    tmp[k] = nums[i]
+                    index_nums_copy[k] = index_nums[i]
+                    i += 1
+                k += 1
+            current_i = i
+            while i <= mid:
+                tmp[k] = nums[i]
+                index_nums_copy[k] = index_nums[i]
+                k += 1
+                i += 1
+            while j <= right:
+                tmp[k] = nums[j]
+                index_nums_copy[k] = index_nums[j]
+                k += 1
+                j += 1
+            for i in range(left, right + 1):
+                nums[i] = tmp[i]
+                index_nums[i] = index_nums_copy[i]
+            #print(nums)
+        if not nums:
+            return count
+        merge_sort(nums, 0, n - 1, index_nums)
+        #print(nums)
+        return count
+
+
 
 class Solution:
     def countSmaller(self, nums: List[int]) -> List[int]:
@@ -84,6 +220,22 @@ class Solution:
                 j += 1
             res.append(counter)
             i += 1
+        return res
+        # my second try. not efficient, 超时 堆 heap
+        heap = []
+        n = len(nums)
+        res = [0] * n
+        for i in range(n - 1, -1, -1):
+            counter = 0
+            temp = []
+            while heap and heap[0] < nums[i]:
+                popped = heappop(heap)
+                counter += 1
+                temp.append(popped)
+            heappush(heap, nums[i])
+            res[i] = counter
+            while temp:
+                heappush(heap, temp.pop())
         return res
 
 

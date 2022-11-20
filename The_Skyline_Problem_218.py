@@ -56,7 +56,7 @@ class SegmentTreeNode:
 class SegmentTree:
 
     def push_down(self, root):
-        # push down，懒惰标记下传
+        # push down，懒惰标记下传一层
         # https://www.acwing.com/blog/content/1684/
         if root.lazy_notation:
             root.left.max_val = max(root.lazy_notation, root.left.max_val)
@@ -95,7 +95,8 @@ class SegmentTree:
         bds = set()
         # 离散化Discretization，在相差大于1的数间加一个数, sort and unique the given buildings
         # https://www.cnblogs.com/qlky/articles/5716796.html
-        # # 根据JinFish/带带大师兄的問題：请问一下怎么处理这种情况：[4, 9, 15], [10, 12, 10] 。第一个区间的右端点+1恰好等于第二个区间的左端点， jie的回答
+        # # 根据JinFish/带带大师兄的問題：请问一下怎么处理这种情况：[4, 9, 15], [10, 12, 10] 。第一个区间的右端点+1恰好等于第二个区间的左端点， jie的回答:
+        # 实在抱歉这么久了才回复你，最近有点忙，没看到你的评论。不过你提的问题很好，确实我所有的解法都不能通过这个用例，不过直观上来说，造成这个问题的根源在于+1这个操作使得两个区间刚好连起来了，那么解决方法就是，我们能否+0.5使得两个区间不会连起来？显然不太方便，那不妨所有输入的点都*2吧：
         for building in buildings:
             bds.add(building[0] * 2)
             bds.add(building[1] * 2)

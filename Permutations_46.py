@@ -78,3 +78,24 @@ class Solution2:
         used = [False for _ in range(len(nums))]
         dfs(nums, depth, path, used, res)
         return res
+        '''
+        # my latest try: depth is not required, we can use curr_arr.length
+        res = []
+        def backtrack(res, curr_arr, nums, le, used):
+            if len(curr_arr) == le:
+                #print(curr_arr)
+                res.append(curr_arr.copy())
+                return
+            for i in range(le):
+                if used[i]:
+                    continue
+                curr_arr.append(nums[i])
+                used[i] = True
+                backtrack(res, curr_arr, nums, le, used)
+                curr_arr.pop()
+                used[i] = False
+        le = len(nums)
+        backtrack(res, [], nums, le, [False] * le)
+        return res
+        '''
+

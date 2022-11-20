@@ -59,3 +59,32 @@ class Solution2:
         candidates.sort()
         dfs(candidates, len(candidates), target, 0, [], res)
         return res
+
+
+class Solution:
+    # my latest try. similar to https://leetcode-cn.com/problems/combination-sum/solution/hui-su-suan-fa-jian-zhi-python-dai-ma-java-dai-m-2/
+    done = False
+    def combinationSum(self, candidates: List[int], target: int) -> List[List[int]]:
+        def dfs(candidates, total, path, res, start_i, le):
+            # 当 total 等于 target 或 大于 target 说明 不需要再向右 或向下
+            if total == target:
+                res.append(path[:])
+                self.done = True
+                return
+            if total > target:
+                self.done = True
+                return
+            for i in range(start_i, le):
+                # if done is true 既不向下 也不向右 因为candidates 有序，后面的只会更大
+                if self.done:
+                    break
+                path.append(candidates[i])
+                # 从上往下传时 start_i 不变, 但是在下面的 start i 都和顶端的 i 相同
+                dfs(candidates, total + candidates[i], path, res, i, le)
+                path.pop()
+            # 出栈（向上）重置 done 的值
+            self.done = False
+        res = []
+        candidates.sort()
+        dfs(candidates, 0, [], res, 0, len(candidates))
+        return res

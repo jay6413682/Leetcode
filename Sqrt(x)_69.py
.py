@@ -1,7 +1,7 @@
 import math
 class Solution:
     def mySqrt(self, x: int) -> int:
-        """ binary search
+        """ binary search 二分答案
         https://leetcode-cn.com/problems/sqrtx/solution/er-fen-cha-zhao-niu-dun-fa-python-dai-ma-by-liweiw/
         时间复杂度：O(\log x)O(logx)，每一次搜索的区间大小为原来的 \cfrac{1}{2} 21，时间复杂度为 O(\log_2 x) = O(\log x)O(log 2x)=O(logx)；
         空间复杂度：O(1)O(1)。  

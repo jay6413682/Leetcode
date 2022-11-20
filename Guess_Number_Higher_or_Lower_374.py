@@ -3,6 +3,20 @@
 # @return -1 if my number is lower, 1 if my number is higher, otherwise return 0
 # def guess(num: int) -> int:
 
+class Solution1:
+    def guessNumber(self, n: int) -> int:
+        # my latest solution. 二分答案 幸运56 binary search https://leetcode.cn/problems/guess-number-higher-or-lower/solution/shi-fen-hao-yong-de-er-fen-cha-zhao-fa-mo-ban-pyth/
+        left = 1
+        right = n
+        while left < right:
+            mid = (left + right + 1) // 2 
+            if guess(mid) == -1:
+                right = mid - 1
+            else:
+                left = mid
+        return left
+
+
 class Solution:
     def guessNumber(self, n: int) -> int:
         """ binary search: https://leetcode-cn.com/problems/guess-number-higher-or-lower/solution/cai-shu-zi-da-xiao-by-leetcode-solution-qdzu/

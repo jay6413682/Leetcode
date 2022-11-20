@@ -7,6 +7,38 @@ class Solution:
         回溯法，大剪枝 + 小剪枝 优化
         https://leetcode-cn.com/problems/combination-sum-ii/solution/hui-su-suan-fa-jian-zhi-python-dai-ma-java-dai-m-3/
         """
+        # my latest solution
+        def dfs(candidates, start_i, used, path, res, le, total):
+            if total == target:
+                # print(path)
+                res.append(path[:])
+                return
+            if start_i == le:
+                return
+
+            for i in range(start_i, le):
+                # print(total, path, i)
+                # i > start_i 时 used[i - 1]一定是 false 所以没有意义
+                # 剪枝：当前节点所在level （当前循环） 已经被使用的节点
+                if i > start_i and candidates[i] == candidates[i - 1]:# and used[i - 1] is False:
+                    continue
+                total += candidates[i]
+                # 剪枝：如果总和已经大于 target 那么现在这层剩下的 和 子节点都可以跳过
+                if total > target:
+                    break
+                path.append(candidates[i])
+                #used[i] = True
+                # print(total, path, i)
+                dfs(candidates, i + 1, used, path, res, le, total)
+                path.pop()
+                total -= candidates[i]
+                #used[i] = False
+        candidates.sort()
+        le = len(candidates)
+        used = [False] * le
+        res = []
+        dfs(candidates, 0, used, [], res, le, 0)
+        return res
         def dfs(candidates, target, length, start, path, res):
             if target == 0 and path not in res:
                 res.append(path.copy())

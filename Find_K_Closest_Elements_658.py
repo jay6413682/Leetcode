@@ -3,6 +3,7 @@ class Solution2:
         """ binary search: https://leetcode-cn.com/problems/find-k-closest-elements/solution/pai-chu-fa-shuang-zhi-zhen-er-fen-fa-python-dai-ma/
         Find K Closest Elements 问题转化为 寻找最优区间的左边界
         总的来说是定一个R=总数组长度-K个最接近的元素 然后判断时候 根据 MID 和MID+K 之间的差值形成一个里面有K+1个元素的区间.然后对比左到右哪个元素更接近目标值.距离目标值远(即绝对值大)的就缩那一边的边界.
+        关于为什么l = mid +1 ，r = mid： 区间是k + 1 个数，要去掉一个数，如果 x 离 m 近，去掉区间最右，m仍然可能是答案，所以r = m；如果x 离m + k 近，去掉区间最左（m），所以l = m + 1
         时间复杂度：O(\log N + K)O(logN+K)，这里 NN 是数组的长度，使用二分法的时间复杂度是对数级别的。感谢 @a-wen-u 朋友的指正。
         空间复杂度：O(1)O(1)，只使用了常数个额外的辅助空间。
 
@@ -12,6 +13,11 @@ class Solution2:
         right = n - k
         while left < right:
             mid = (left + right) // 2
+            # cannot be abs(x - arr[mid]) <= abs(arr[mid + k] - x)
+            # 比如 [1,1,2,2,2,2,2,3,3]
+            # 3
+            # 3
+            # 造成arr[mid] 离 x 比较近的 错觉
             if x - arr[mid] <= arr[mid + k] - x:
                 right = mid
             else:

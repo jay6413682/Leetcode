@@ -134,6 +134,7 @@ class Solution3:
                 heapq.heappop(heap_nums)
         return heap_nums[0]
         """
+        # easier solution，easier to remember
         heap_nums = []
         length = len(nums)
         for n in nums:
@@ -145,6 +146,26 @@ class Solution3:
             i += 1
         return res
         """
+
+def max_sift_down(nums, start, end):
+    i = start
+    while i <= end:
+        if i * 2 + 1 <= end:
+            child_left_i = i * 2 + 1
+            if nums[i] < nums[child_left_i]:
+                nums[i], nums[child_left_i] = nums[child_left_i], nums[i]
+                i = i * 2 + 1
+        if i * 2 + 2 <= end:
+            child_right_i = i * 2 + 2
+            if nums[i] < nums[child_right_i]:
+                nums[i], nums[child_right_i] = nums[child_right_i], nums[i]
+                i = i * 2 + 2
+
+def max_heapify(nums):
+    n = len(nums)
+    for i in range((n - 2) // 2, 0):
+        _sift_down(nums, i, n - 1)
+
 
 
 import heapq
@@ -189,3 +210,105 @@ class Solution4:
             self.sift_down(nums, 0, n - j - 2)
             # print(nums)
         return nums[-k]
+
+
+class Solution5:
+    # 我自己的 heap implementation
+    def _max_sift_down(self, nums, start, end):
+        '''
+        # sift down from https://leetcode.cn/problems/sort-an-array/solution/fu-xi-ji-chu-pai-xu-suan-fa-java-by-liweiwei1419/
+        i = start
+        while 2 * i + 1 <= end:
+            j = 2 * i + 1
+            if (j + 1 <= end and nums[j + 1] > nums[j]):
+                j += 1
+            if (nums[j] > nums[i]):
+                nums[i], nums[j] = nums[j], nums[i]
+            else:
+                break
+            i = j
+        return
+        '''
+        #'''
+        # my sift down solution below:
+        i = start
+        #print(nums, start, end)
+        while i <= end:
+            go_left = go_right = False
+            if i * 2 + 1 <= end:
+                child_left_i = i * 2 + 1
+                if nums[i] < nums[child_left_i]:
+                    # left child 大， 但还没比较 right child。先不换
+                    go_left = True
+            if i * 2 + 2 <= end:
+                child_right_i = i * 2 + 2
+                if nums[i] < nums[child_right_i] and nums[child_left_i] < nums[child_right_i]:
+                    # right child 比 left child 和 parent 都大，换
+                    nums[i], nums[child_right_i] = nums[child_right_i], nums[i]
+                    go_right = True
+            if not go_left and not go_right:
+                break
+            elif go_left and not go_right:
+                # left child 比 parent 大，right child 没有， 所以 swap left child with parent
+                nums[i], nums[child_left_i] = nums[child_left_i], nums[i]
+                i = i * 2 + 1
+            else:
+                i = i * 2 + 2
+            #print(nums)
+        #'''
+
+    def max_heapify(self, nums):
+        n = len(nums)
+        # child = parent * 2 + 1 or parent * 2 + 2. child = n， so the last parent is: (n - 2) // 2
+        for i in range((n - 2) // 2, -1, -1):
+            self._max_sift_down(nums, i, n - 1)
+
+    def _max_sift_up(self, nums, start):
+        # my solution, similar to https://gist.github.com/bellbind/224175 
+        i = start
+        while i > 0:
+            # child = parent * 2 + 1 or parent * 2 + 2
+            if i % 2 == 0:
+                parent = (i - 2) // 2
+            else:
+                parent = (i - 1) // 2
+            # or just parent = (i - 1) // 2
+            if nums[parent] < nums[i]:
+                nums[parent], nums[i] = nums[i], nums[parent]
+                i = parent
+            else:
+                break
+
+    def max_heappush(self, nums, num):
+        nums.append(num)
+        self._max_sift_up(nums, len(nums) - 1)
+
+    def max_heappop(self, nums):
+        # similar to extractMax in https://www.geeksforgeeks.org/priority-queue-using-binary-heap/ 
+        le = len(nums)
+        nums[0], nums[le - 1] = nums[le - 1], nums[0]
+        res = nums.pop()
+        self._max_sift_down(nums, 0, le - 2)
+        return res 
+
+    def findKthLargest(self, nums: List[int], k: int) -> int:
+        """
+        self.max_heapify(nums)
+        print(nums)
+        while k > 0:
+            res = nums.pop(0)
+            self.max_heapify(nums)
+            k -= 1
+        return res
+        """
+        le = len(nums)
+        heap = []
+        for i in range(le):
+            self.max_heappush(heap, nums[i])
+            #print(heap)
+        #print(heap)
+        for i in range(k):
+            res = self.max_heappop(heap)
+            #print(res, heap)
+        return res
+

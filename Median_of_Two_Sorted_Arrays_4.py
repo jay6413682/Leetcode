@@ -2,7 +2,7 @@ class Solution3:
     def findMedianSortedArrays(self, nums1: List[int], nums2: List[int]) -> float:
         """ binary search: https://leetcode-cn.com/problems/median-of-two-sorted-arrays/solution/xun-zhao-liang-ge-you-xu-shu-zu-de-zhong-wei-s-114/ 视频
         18:50 左右讲解有错误，正确描述是：幻灯片里，下面的两种情况不会出现，只可能出现上面的两种情况。
-        TrustTheProcess 在https://leetcode-cn.com/problems/median-of-two-sorted-arrays/solution/he-bing-yi-hou-zhao-gui-bing-guo-cheng-zhong-zhao-/ 中的疑問：
+        TrustTheProcess 在https://leetcode-cn.com/problems/median-of-two-sorted-arrays/solution/he-bing-yi-hou-zhao-gui-bing-guo-cheng-zhong-zhao-/ (好像已经删除了) 中的疑問：
         你好，请问 使得 nums1[i - 1] <= nums2[j] && nums2[j - 1] <= nums1[i] 这个条件为什么只取其中一个的反面进行判断呢。
 
         在参考代码1中
@@ -32,6 +32,8 @@ class Solution3:
 
         编写代码的逻辑是逐渐排除掉错误的答案，因此编写 if 和 else 的时候对其中一个条件取反就可以了。这种两边向中间夹的过程，可以保证退出循环以后，能找到正确的分割线的位置。
 
+        微波炉：这个算法只有在nums1的长度小于等于nums2的长度时才能正确运行，不然在某些用例下（如[1, 3]，[2])while循环中会发生数组索引越界的异常。所以第一步的nums1, nums2 = nums2, nums1不单单是为了缩减搜索范围，更是确保while循环不会发生数组越界访问。如果不想进行第一步的数组交换话，则要在while循环中加上一些必要的逻辑代码来防止发生数组索引越界，这样无论nums1是不是较短的数组，该算法都能正确运行。
+        
         时间复杂度：O(\log(m+n))O(log(m+n))，其中 mm 和 nn 分别是数组 \textit{nums}_1nums1 和 \textit{nums}_2nums 2的长度。初始时有 k=(m+n)/2k=(m+n)/2 或 k=(m+n)/2+1k=(m+n)/2+1，每一轮循环可以将查找范围减少一半，因此时间复杂度是 O(\log(m+n))O(log(m+n))。
 
         空间复杂度：O(1)O(1)。
@@ -49,6 +51,8 @@ class Solution3:
             j = left_size - i
             if shorter_nums[i - 1] > longer_nums[j]:
                 right = i - 1
+            #elif longer_nums[j - 1] > shorter_nums[i]:
+            #    left = i + 1
             else:
                 left = i
         i = left

@@ -3,6 +3,7 @@
 
 # 世界上最快的排序算法——Timsort
 # http://sunshuyi.vip/2020/03/26/leetcode/tim-sort/?hmsr=leetcode&hmpl=leetcode%2Dsort&hmcu=home&hmkw=home&hmci=none
+# https://web.archive.org/web/20220309041049/http://sunshuyi.vip/2020/03/26/leetcode/tim-sort/
 # Timsort是由Tim Peters在2002年实现的，自Python 2.3以来，它一直是Python的标准排序算法。Java在JDK中使用Timsort对非基本类型进行排序。Android平台和GNU Octave还将其用作默认排序算法。
 # Timsort是一种稳定的混合排序算法，同时应用了二分插入排序和归并排序的思想，在时间上击败了其他所有排序算法。它在最坏情况下的时间复杂度为O(nlogn)O(nlogn)优于快速排序；最佳情况的时间复杂度为O(n)O(n)，优于归并排序和堆排序。
 # 由于使用了归并排序，使用额外的空间保存数据，TimSort空间复杂度是O(n)O(n)
@@ -204,7 +205,7 @@ class Solution4:
         对于很小的数组（N<=20），插入排序要比快速排序更好。因为快速排序有递归开销，并且插入排序是稳定排序。
         另外https://leetcode-cn.com/problems/sort-an-array/solution/fu-xi-ji-chu-pai-xu-suan-fa-java-by-liweiwei1419/
         列表大小等于或小于该大小（7），将优先于 quickSort 使用插入排序
-        版本 1：基本***：把等于切分元素的所有元素分到了数组的同一侧，可能会造成递归树倾斜；不好： https://leetcode-cn.com/problems/sort-an-array/solution/shi-er-chong-pai-xu-suan-fa-bao-ni-man-yi-dai-gift/ gif 图
+        版本 1：基本（单指针）***：把等于切分元素的所有元素分到了数组的同一侧，可能会造成递归树倾斜；不好： https://leetcode-cn.com/problems/sort-an-array/solution/shi-er-chong-pai-xu-suan-fa-bao-ni-man-yi-dai-gift/ gif 图
         版本 2：双指针***：把等于切分元素的所有元素等概率地分到了数组的两侧，避免了递归树倾斜，递归树相对平衡；可以
         版本 3：三指针***：把等于切分元素的所有元素挤到了数组的中间，在有很多元素和切分元素相等的情况下，递归区间大大减少。当重复元素较多时，这个解应该是最好的
         这里有一个经验的总结：之所以***有这些优化，起因都是来自「递归树」的高度。关于「树」的算法的优化，绝大部分都是在和树的「高度」较劲。类似的通过减少树高度、使得树更平衡的数据结构还有「二叉搜索树」优化成「AVL 树」或者「红黑树」、「并查集」的「按秩合并」与「路径压缩」。
@@ -218,6 +219,7 @@ class Solution4:
         """
         def quick_sort(nums, left, right):
             # print(left, right)
+            # left 有可能 大于 right，比如 caller may pass：quick_sort(nums, 0, -1)，
             if left >= right:
                 return
             # left，mid，right交换排序
@@ -235,7 +237,7 @@ class Solution4:
             pivot = right - 1
             i = left
             j = pivot - 1
-            # left (i) 向右扫，pivot - 1 (j) 向左扫，左大右小交换，直到交错
+            # left (i) 向右扫，pivot - 1 (j) 向左扫，与pivot比较，左大右小交换，直到交错
             while i <= j:
                 while nums[i] <= nums[pivot] and i <= j:
                     i += 1
@@ -248,7 +250,8 @@ class Solution4:
             nums[pivot], nums[i] = nums[i], nums[pivot]
             pivot = i
             # print(nums, left, pivot, right)
-            # pivot左边右边分别递归排序
+            # pivot左边右边分别递归排序: 不能是left -> pivot 因为 pivot 左边小于 pivot，右边 大于pivot， 所以pivot 这个位置是固定不能变的，如果再排序pivot的所在值 可能就不在这个位置了
+            # 如果pivot == 0，pivot - 1 < left
             quick_sort(nums, left, pivot - 1)
             quick_sort(nums, pivot + 1, right)
         quick_sort(nums, 0, len(nums) - 1)
@@ -430,7 +433,7 @@ class Solution11:
 
         有说他是external sort 但 网上也有说不是。
         """
-
+        '''
         def bucket_sort(nums, bucket_size):
             if len(nums) < 2:
                 return nums
@@ -442,6 +445,8 @@ class Solution11:
                 if n < mi:
                     mi = n
             res = []
+            # ceil(num / div) == (num + div - 1) // div
+            # bucket_counts = (ma - mi + 1 + bucket_size - 1) // bucket_size
             bucket_counts = (ma - mi) // bucket_size + 1
             buckets = [[] for _ in range(bucket_counts)]
             # put nums in buckets
@@ -453,6 +458,7 @@ class Solution11:
                 if not bucket:
                     continue
                 if len(bucket) == 1 or bucket_size == 1:
+                    # bucket size == 1 ：有可能多个相同的数在一个bucket 里
                     res.extend(bucket)
                 else:
                     # every nums in the same bucket, make bucket smaller
@@ -460,6 +466,44 @@ class Solution11:
                         bucket_size -= 1
                     res.extend(bucket_sort(bucket, bucket_size))
             return res
+        '''
+        # my latest try。may optimized a little？
+        def bucket_sort(nums, bucket_size):
+            #print(nums, bucket_size)
+            if len(nums) < 2:
+                return nums
+            # get max val and min val
+            ma = mi = nums[0]
+            for n in nums:
+                if n > ma:
+                    ma = n
+                if n < mi:
+                    mi = n
+            res = []
+            # ceil(num / div) == (num + div - 1) // div
+            # bucket_counts = (ma - mi + 1 + bucket_size - 1) // bucket_size
+            bucket_counts = (ma - mi) // bucket_size + 1
+            if bucket_counts == 1:
+                # 如果bucket count 是1 ，bucket size 也是 1，说明 nums 值 都相同
+                if bucket_size == 1:
+                    return nums
+                bucket_size -= 1
+                return bucket_sort(nums, bucket_size)
+            else:
+                buckets = [[] for _ in range(bucket_counts)]
+                # put nums in buckets
+                for num in nums:
+                    buckets[(num - mi) // bucket_size].append(num)
+                # sort in buckets
+                # print("buckets: {}".format(buckets))
+                for bucket in buckets:
+                    if not bucket:
+                        continue
+                    if len(bucket) == 1 or bucket_size == 1:
+                        res.extend(bucket)
+                    else:
+                        res.extend(bucket_sort(bucket, bucket_size))
+                return res
         return bucket_sort(nums, 10)
 
 
@@ -566,3 +610,267 @@ class Solution12:
         return self.inorder_traverse(root)
         # or inplace change, this will save space complexity
         # self.inorder_traverse2(root, nums, [0])
+
+
+class Solution:
+    def sortArray(self, nums: List[int]) -> List[int]:
+        # my own implementation
+
+        # radix sort
+        ma = max(nums)
+        mi = min(nums)
+        num_digits = len(str(ma - mi))
+        digits_count = 0
+        base = 1
+        buckets = [[] for _ in range(10)]
+        tmp = nums.copy()
+        while digits_count < num_digits:
+            div = base * (10 ** digits_count)
+            for num in tmp:
+                # 某一位
+                current_bit = ((num - mi) // div) % 10
+                # print(current_bit)
+                buckets[current_bit].append(num)
+            tmp = []
+            for bucket in buckets:
+                tmp.extend(bucket)
+            buckets = [[] for _ in range(10)]
+            digits_count += 1
+        return tmp
+
+        # bucket sort
+        def bucket_sort(nums, bucket_size):
+            # if bucket_size == 0, nums are all the same
+            if len(nums) == 1 or not nums or bucket_size == 0:
+                return nums
+            ma = max(nums)
+            mi = min(nums)
+            n = len(nums)
+            rng = max(nums) - min(nums) + 1
+            buckets_count = ((rng - 1) // bucket_size) + 1
+            buckets = [[] for _ in range(buckets_count)]
+            res = []
+            #print(buckets)
+            for i in range(n):
+                buckets_index = (nums[i] - mi) // bucket_size
+                buckets[buckets_index].append(nums[i])
+            #print(buckets)
+            for bucket in buckets:
+                res.extend(bucket_sort(bucket, bucket_size - 1))
+            return res
+        return bucket_sort(nums, 10)
+
+        # counting sort
+        ma = max(nums)
+        mi = min(nums)
+        rng = ma - mi + 1
+        counts = [0] * rng
+        for num in nums:
+            counts[num - mi] += 1
+        res = []
+        for i in range(rng):
+            while counts[i]:
+                res.append(i + mi)
+                counts[i] -= 1
+        return res
+
+
+        # bst sort
+        # build bst
+        class Node(object):
+            def __init__(self, val=None, left=None, right=None):
+                self.val = val
+                self.left = left
+                self.right = right
+        
+        class BST(object):
+            def insert(self, root, num):
+                if not root:
+                    #print(num)
+                    return Node(num)
+                if num <= root.val:
+                    root.left = self.insert(root.left, num)
+                else:
+                    root.right = self.insert(root.right, num)
+                return root
+
+            def __init__(self, nums):
+                self.root = Node(nums[0])
+                for num in nums[1:]:
+                    #print(self.root.val)
+                    self.insert(self.root, num)
+                #print(self.inorder_traverse(self.root))
+            
+            def inorder_traverse(self, root):
+                res = []
+                if not root:
+                    return []
+                if root.left:
+                    res.extend(self.inorder_traverse(root.left))
+                #print(root.val)
+                if root:
+                    res.append(root.val)
+                if root.right:
+                    res.extend(self.inorder_traverse(root.right))
+                return res
+        bst = BST(nums)
+        return bst.inorder_traverse(bst.root)
+
+        # heap sort
+        def _siftdown(nums, start, end):
+            i = start
+            while i <= end:
+                go_right = go_left = False
+                left_child = 2 * i + 1
+                right_child = 2 * i + 2
+                if right_child <= end:
+                    if nums[right_child] > nums[i] and nums[right_child] > nums[left_child]:
+                        nums[right_child], nums[i] = nums[i], nums[right_child]
+                        go_right = True
+                if left_child <= end and nums[i] < nums[left_child]:
+                    nums[left_child], nums[i] = nums[i], nums[left_child]
+                    go_left = True
+                if go_left:
+                    i = left_child
+                elif go_right:
+                    i = right_child
+                else:
+                    break
+        n = len(nums)
+        last_parent_i = (n - 2) // 2
+        for i in range(last_parent_i, -1, -1):
+            _siftdown(nums, i, n - 1)
+            # heapq siftup is actually siftdown...: https://stackoverflow.com/questions/55375312
+            # heapq._siftup_max(nums, i)
+        #print(nums)
+        for i in range(n - 1, -1, -1):
+            nums[i], nums[0] = nums[0], nums[i]
+            _siftdown(nums, 0, i - 1)
+        return nums
+
+        heapq.heapify(nums)
+        print(nums)
+        res = []
+        while nums:
+            res.append(heapq.heappop(nums))
+        return res
+
+        # quick sort
+        n = len(nums)
+        start = 0
+        end = n - 1
+        def sort(nums, start, end):
+            if start >= end:
+                return
+            mid = (start + end) // 2
+            if nums[start] > nums[mid]:
+                nums[mid], nums[start] = nums[start], nums[mid]
+            if nums[start] > nums[end]:
+                nums[start], nums[end] = nums[end], nums[start]
+            if nums[mid] > nums[end]:
+                nums[mid], nums[end] = nums[end], nums[mid]
+            #print(nums)
+            pivot = mid
+            nums[pivot], nums[end - 1] = nums[end - 1], nums[pivot]
+            pivot = end - 1
+            i = start
+            j = pivot - 1
+            #print(nums)
+            while i <= j:
+                while nums[i] <= nums[pivot] and i <= j:
+                    i += 1
+                while nums[j] >= nums[pivot] and i <= j:
+                    j -= 1
+                if i >= j:
+                    break
+                nums[i], nums[j] = nums[j], nums[i]
+                #i += 1
+                #j -= 1
+            nums[pivot], nums[i] = nums[i], nums[pivot]
+            #print(nums, start, end)
+            sort(nums, start, pivot - 1)
+            sort(nums, pivot + 1, end)
+        sort(nums, start, end)
+        return nums
+
+        # merge sort
+        n = len(nums)
+        def sort(nums, left, right):
+            #print(nums)
+            if left == right:
+                return
+            mid = (left + right) // 2
+            sort(nums, left, mid)
+            sort(nums, mid + 1, right)
+            if nums[mid] < nums[mid + 1]:
+                return
+            # merge
+            i = left
+            j = mid + 1
+            tmp = [None] * n
+            k = left
+            while i <= mid and j <= right:
+                if nums[i] <= nums[j]:
+                    tmp[k] = nums[i]
+                    i += 1
+                else:
+                    tmp[k] = nums[j]
+                    j += 1
+                k += 1
+            while i <= mid:
+                tmp[k] = nums[i]
+                i += 1
+                k += 1
+            while j <= right:
+                tmp[k] = nums[j]
+                j += 1
+                k += 1
+            # nums = tmp.copy() doesn't work
+            # 在 function 中 直接赋值 传入的 mutable （list / dict）argument 不会改变 argument 的值 ，因为 相当于改变了 reference，但是如果 直接 append / extend list/dict 或 改变element 的值 比如 nums[i] = x 则会改变 argument 的值
+            for ind in range(left, right + 1):
+                nums[ind] = tmp[ind]
+        sort(nums, 0, n - 1)
+        return nums
+
+        #shell sort
+        div = 2
+        n = len(nums)
+        step = n // 2
+        while step >= 1:
+            # insertion sort
+            for start in range(step):
+                i = start + step
+                while i < n:
+                    for j in range(i, step - 1, -1):
+                        if nums[j] < nums[j - step]:
+                            nums[j], nums[j - step] = nums[j - step], nums[j]
+                        else:
+                            break
+                    i += step
+            step //= 2
+        return nums
+
+        # bubble sort
+        n = len(nums)
+        for i in range(n):
+            for j in range(n - 1, i, -1):
+                if nums[j] < nums[j - 1]:
+                    nums[j], nums[j - 1] = nums[j - 1], nums[j]
+        return nums
+        # insertion sort
+        n = len(nums)
+        for i in range(1, n):
+            for j in range(i, 0, -1):
+                if nums[j - 1] > nums[j]:
+                    nums[j], nums[j - 1] = nums[j - 1], nums[j]
+                else:
+                    break
+        return nums
+
+        # selection sort
+        n = len(nums)
+        for i in range(n):
+            for j in range(i, n):
+                if nums[j] < nums[i]:
+                    nums[i], nums[j] = nums[j], nums[i]
+        return nums

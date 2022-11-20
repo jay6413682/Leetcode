@@ -115,11 +115,12 @@ from collections import deque
 
 class MonoDecQueue(object):
     """ 单调递减队列 implementation 1：https://leetcode.cn/problems/sliding-window-maximum/solution/dan-diao-dui-lie-by-labuladong/ push and pop value
-    为什么pop 不用 while loop ： slyfox1201: pop:在元素入队时，是按照下标i入队的，因此队列中剩余的元素，其下标一定是升序的。窗口大小不变，最先被排除出窗口的，一直是下标最小的元素，设为r。元素r在队列中要么是头元素，要么不存在。
+    为什么pop 不用 while loop ： slyfox1201: pop:在元素入队时，是按照下标i入队的，因此队列中剩余的元素，其下标一定是升序的。窗口大小不变，最先被排除出窗口的，一直是下标最小的元素，设为r。元素r在队列中要么是头元素，要么不存在。（栈是单减队列，输入的数组如果前面的数比后面的数小，就会被压出队列；如果前面的数>= 后面的数，后面的数入队列。所以如果window 向右移动，当要检查左边出window 的数是不是在队列中时，它只可能在队头，不可能在队列的其他地方，因为否则已经被压出队列了）
     为什么 self.queue[-1] < val， 而不是<=
     daping3：恰恰相反，能安全地pop_front是因为窗口中的最大值有重复时保留重复，哪里唯一了...
     Alexhanbing：比当前小的元素才继续往下压扁，大于等于的都会继续压，会存在重复元素，所以是单调队列，不是严格单调
     这样做的话，push时如果self.queue[-1] == val，self.queue[-1] 会保留在queue 当中，因为它现在还在window当中，只有当它不在window中时（pop的时候），再把它pop
+    避免栈中前面的相同元素被过早弹出，下一次window要move out of 前面的相同元素时，把栈中后面的相同元素弹出
     """
     def __init__(self):
         self.queue = deque()
@@ -157,7 +158,8 @@ class MonoDecQueue2(object):
         return self.nums[self.queue[0]]
 
     def pop(self, i):
-        if self.queue and self.queue[0] <= i:
+        # 从队列中弹出所有输入数组中 i 和 它左侧的 数:self.queue[0] == i 的时候 也会被弹出
+        while self.queue and self.queue[0] <= i:
             self.queue.popleft()
 
 class Solution4:
@@ -185,4 +187,53 @@ class Solution4:
                 res.append(q.max())
                 q.pop(i - k + 1)
             #print(q.queue)
+        return res
+
+
+class Solution5:
+    def maxSlidingWindow(self, nums: List[int], k: int) -> List[int]:
+        # my solution, 单调队列： https://blog.csdn.net/Hanx09/article/details/108434955
+        # 非严格单调递减
+        mono_queue = deque()
+        res = []
+        for i, num in enumerate(nums):
+            #'''
+            # solution 1
+            if i <= k - 1:
+                # push
+                while mono_queue and mono_queue[-1] < num:
+                    mono_queue.pop()
+                mono_queue.append(num)
+                # add to window max if i == k - 1
+                if i == k - 1:
+                    res.append(mono_queue[0])
+            else:
+                # pop
+                if mono_queue and mono_queue[0] == nums[i - k]:
+                    mono_queue.popleft()
+                # push
+                while mono_queue and mono_queue[-1] < num:
+                    mono_queue.pop()
+                mono_queue.append(num)
+                # add window max 
+                res.append(mono_queue[0])
+            #'''
+            '''
+            # solution 2
+            if i < k - 1:
+                # push when window not full yet
+                while mono_queue and mono_queue[-1] < num:
+                    mono_queue.pop()
+                mono_queue.append(num)
+            else:
+                # push
+                while mono_queue and mono_queue[-1] < num:
+                    mono_queue.pop()
+                mono_queue.append(num)
+                # add window max
+                res.append(mono_queue[0])
+                # pop first before next push
+                if mono_queue and mono_queue[0] == nums[i + 1 - k]:
+                    mono_queue.popleft()
+            '''
         return res

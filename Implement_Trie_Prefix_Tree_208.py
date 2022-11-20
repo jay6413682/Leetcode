@@ -5,7 +5,7 @@ class TrieNode:
 
 class Trie:
 
-    """ Trie，prefix tree 前缀树，字典树：https://www.pythonf.cn/read/123752 
+    """ Trie，prefix tree 前缀树，字典树：https://www.pythonf.cn/read/123752 (链接不work) https://pythontechworld.com/article/detail/FUkGGMQaoO4o 
     标准解法，不需要dict，我觉得比较好记：https://leetcode-cn.com/problems/implement-trie-prefix-tree/solution/trie-tree-de-shi-xian-gua-he-chu-xue-zhe-by-huwt/ 
     时间复杂度：insert、search、startsWith：O(N)
     空间复杂度：insert：O(N)；search、startsWith：O(1)

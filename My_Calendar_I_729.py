@@ -63,6 +63,6 @@ class MyCalendar2:
         return True
 
 '''
-解法3:线段树：https://leetcode-cn.com/problems/my-calendar-i/solution/xian-duan-shu-he-er-cha-sou-suo-shu-by-shi-huo-de-/
+解法3:线段树segment tree：https://leetcode-cn.com/problems/my-calendar-i/solution/xian-duan-shu-he-er-cha-sou-suo-shu-by-shi-huo-de-/
 平衡树其实是线段树的解：https://leetcode-cn.com/problems/my-calendar-i/solution/wo-de-ri-cheng-an-pai-biao-i-by-leetcode/
 '''

@@ -43,32 +43,6 @@ class Solution:
         return board
 
 
-class UnionFind(object):
-    def __init__(self, total):
-        self.fa = {num: num for num in range(total)}
-        self.rank = {num: 1 for num in range(total)}
-
-    def union(self, a, b):
-        x = self.find(a)
-        y = self.find(b)
-        if x == y:
-            return
-        # union by depth
-        if self.rank[x] >= self.rank[y]:
-            self.fa[y] = x
-        else:
-            self.fa[x] = y
-        if self.rank[x] == self.rank[y]:
-            self.rank[x] += 1
-
-    def find(self, num):
-        if num == self.fa[num]:
-            return num
-        # path compression optimization
-        self.fa[num] = self.find(self.fa[num])
-        return self.fa[num]
-
-
 class Solution2:
 
     def solve(self, board: List[List[str]]) -> None:
@@ -107,6 +81,31 @@ class Solution2:
                     board[i][j] = 'O'
         return board
 
+
+class UnionFind(object):
+    def __init__(self, total):
+        self.fa = {num: num for num in range(total)}
+        self.rank = {num: 1 for num in range(total)}
+
+    def union(self, a, b):
+        x = self.find(a)
+        y = self.find(b)
+        if x == y:
+            return
+        # union by depth
+        if self.rank[x] >= self.rank[y]:
+            self.fa[y] = x
+        else:
+            self.fa[x] = y
+        if self.rank[x] == self.rank[y]:
+            self.rank[x] += 1
+
+    def find(self, num):
+        if num == self.fa[num]:
+            return num
+        # path compression optimization
+        self.fa[num] = self.find(self.fa[num])
+        return self.fa[num]
 
 
 class Solution3:

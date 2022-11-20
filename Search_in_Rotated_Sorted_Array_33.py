@@ -1,3 +1,28 @@
+class Solution5:
+    def search(self, nums: List[int], target: int) -> int:
+        """ 最新解，二分查找 binary search. 利用 局部单调性，逐步缩小搜索区间。
+        https://leetcode.cn/problems/search-in-rotated-sorted-array/solution/er-fen-fa-python-dai-ma-java-dai-ma-by-liweiwei141/
+        moffysto的解
+        """
+        left = 0
+        right = len(nums) - 1
+        while left < right:
+            mid = (left + right) // 2
+            if nums[mid] < nums[right]:
+                # 形成mid -- target -- right 的单调区间
+                if nums[mid] < target <= nums[right]:
+                    left = mid + 1
+                else:
+                    right = mid
+            else:
+                # 形成left -- target -- mid 的单调区间
+                if nums[left] <= target <= nums[mid]:
+                    right = mid
+                else:
+                    left = mid + 1
+        return left if nums[left] == target else -1
+                
+
 class Solution4:
     """
     My own solution, 根据模版二：https://leetcode-cn.com/problems/search-insert-position/solution/te-bie-hao-yong-de-er-fen-cha-fa-fa-mo-ban-python-/

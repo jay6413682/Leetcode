@@ -92,6 +92,32 @@ class Solution3:
             if lists[i]:
                 heapq.heappush(q, (lists[i].val, i))
         return dummpy_head.next
+        """
+        # my latest try. easier to understand
+        if not lists:
+            return
+        heap = []
+        for i, root in enumerate(lists):
+            while root:
+                heapq.heappush(heap, (root.val, i))
+                root = root.next
+        #print(heap)
+        root = None
+        if heap:
+            val, i = heapq.heappop(heap)
+            node = lists[i]
+            #print(node)
+            root = curr = node
+            lists[i] = node.next
+            while heap:
+                val, i = heapq.heappop(heap)
+                node = lists[i]
+                #print(node)
+                curr.next = node
+                curr = curr.next
+                lists[i] = node.next
+        return root
+        """
 
 
 class Solution4:

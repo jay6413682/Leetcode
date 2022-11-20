@@ -20,6 +20,31 @@ class Solution:
             else:
                 left = mid + 1
         return left
+        """
+        # my own latest try
+        nums_to_search = [float(-inf)] + nums + [float(-inf)]
+        left = 1
+        n = len(nums)
+        right = n
+        while left < right:
+            mid = (left + right + 1) // 2
+            if nums_to_search[mid - 1] > nums_to_search[mid] > nums_to_search[mid + 1]:
+                right = mid - 1
+            else:
+                left = mid
+            '''
+            上面的其实是用下面的推导出来的
+            if nums[mid - 1] > nums[mid] > nums[mid + 1]:
+                right = mid - 1
+            elif nums[mid] > nums[mid - 1]:
+                left = mid
+            elif nums[mid] < nums[mid + 1]:
+                left = mid + 1
+            elif nums[mid] :
+                right = mid - 1
+            '''
+        return left - 1
+        """
 
 
 class Solution2:

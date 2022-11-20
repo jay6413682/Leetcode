@@ -15,6 +15,22 @@ class Solution1:
         return -1
 
 
+class Solution2:
+    def search(self, nums: List[int], target: int) -> int:
+        # binary search 二分查找
+        # search range 0 -> n - 1
+        # 通解：https://leetcode.cn/problems/search-insert-position/solution/te-bie-hao-yong-de-er-fen-cha-fa-fa-mo-ban-python-/
+        left = 0
+        right = len(nums) - 1
+        while left < right:
+            mid = (left + right) // 2
+            if nums[mid] < target:
+                left = mid + 1
+            else:
+                right = mid
+        return left if nums[left] == target else -1
+
+
 class Solution:
     def search(self, nums: List[int], target: int) -> int:
         """ https://leetcode-cn.com/problems/binary-search/solution/python-di-gui-xie-fa-by-zedong/
