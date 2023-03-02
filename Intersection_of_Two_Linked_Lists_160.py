@@ -42,6 +42,58 @@ class Solution:
                 pointer_b = pointer_b.next
         return pointer_b
 
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+
+class Solution:
+    def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> Optional[ListNode]:
+        """ 快慢指针 linked list my solution """
+        slow = fast = headA
+        fast_pre = ListNode(-1)
+        fast_pre.next = fast
+        met_none = False
+        tail = None
+        # 快慢指针从 其中一个head 往前走 fast先到null 与另一个头节点相连，问题转化为 Linked List Cycle  问题
+        while True:
+            if fast and fast.next:
+                fast_pre = fast_pre.next.next
+                fast = fast.next.next
+            else:
+                if met_none:
+                    # 注意reset tail 与 head之间的连接
+                    tail.next = None
+                    return None
+                if fast:
+                    tail = fast
+                    fast.next = headB
+                    fast = fast.next.next
+                    fast_pre = fast_pre.next.next
+                else:
+                    tail = fast_pre
+                    fast_pre.next = headB
+                    fast = headB
+                    fast = fast.next.next
+                    fast_pre = fast_pre.next.next
+                met_none = True
+            if slow:
+                slow = slow.next
+            else:
+                return None
+            if slow is fast:
+                break
+
+        #print('slow: ', slow, '\n', 'fast: ', fast)
+        new_pointer = headA
+        while new_pointer is not slow:
+            new_pointer = new_pointer.next
+            slow = slow.next
+        # 注意reset tail 与 head之间的连接
+        tail.next = None
+        return slow
+
 
 class Solution3:
     def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> ListNode:

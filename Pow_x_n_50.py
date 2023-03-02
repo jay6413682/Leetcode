@@ -1,6 +1,6 @@
 class Solution2:
     def myPow(self, x: float, n: int) -> float:
-        """ 二分法，my solution, recursive， 优化Solution3 类似https://leetcode-cn.com/problems/powx-n/solution/powx-n-by-leetcode-solution/
+        """ 分治法，my solution, recursive， 优化Solution3 类似https://leetcode-cn.com/problems/powx-n/solution/powx-n-by-leetcode-solution/
         时间复杂度：O(\log n)O(logn)，即为递归的层数。
 
         空间复杂度：O(\log n)O(logn)，即为递归的层数。这是由于递归的函数调用会使用栈空间。
@@ -25,6 +25,11 @@ class Solution2:
 class Solution4:
     def myPow(self, x: float, n: int) -> float:
         """ iterative
+        假设  n 可以写成 二进制表示 bk bk-1 … b1 b0
+        也就是说x ^ n 可以写成 x ^ (2 ^ 0 * b0) * x ^ (2 ^ 1 * b1)  * x ^ (2 ^ 2 * b2)  * x ^ (2 ^ 3 * b3)  … 
+        也就是 x ^ (1 * b0) * x ^ (2 * b1)  * x ^ (4 * b2)  * x ^ (8 * b3)  …
+        所以 如果 b 位 是0，result * 1 ，如果 b 位 是1，result * 乘数，在b0 这一位，乘数 是 1，在 b1这一位，乘数 是 x ^ 2, 在 b2这一位，乘数 是 x ^ 4, … 其实 就是 上 一位 乘数 再 乘以 它 自己
+
         只需记住 https://leetcode-cn.com/problems/powx-n/solution/powx-n-by-leetcode-solution/ 的公式
         圖解與解法：https://leetcode-cn.com/problems/powx-n/solution/ba-zhi-shu-bu-fen-kan-zuo-er-jin-zhi-shu-python-da/
 

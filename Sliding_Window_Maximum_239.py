@@ -159,6 +159,7 @@ class MonoDecQueue2(object):
 
     def pop(self, i):
         # 从队列中弹出所有输入数组中 i 和 它左侧的 数:self.queue[0] == i 的时候 也会被弹出
+        # if or while 都可以，<= or == 都可以
         while self.queue and self.queue[0] <= i:
             self.queue.popleft()
 

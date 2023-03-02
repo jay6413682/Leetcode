@@ -43,7 +43,7 @@ class Solution2:
 
 
 class Solution3:
-    """
+    """ bit manipulation，我自己的理解 看 leetcode_summry.docx
     https://leetcode-cn.com/problems/bitwise-and-of-numbers-range/solution/shu-zi-fan-wei-an-wei-yu-by-leetcode-solution/
     Brian Kernighan 算法
     X & = (X - 1) 将最低位(LSB)的 1 清零
@@ -53,3 +53,46 @@ class Solution3:
         while m < n:
             n &= (n - 1)
         return n
+
+
+class TrieNode:
+    def __init__(self, val=None):
+        self.next = [None, None]
+        self.val = val
+
+class Trie:
+    def __init__(self):
+        self.root = TrieNode()
+    def insert(self, num):
+        i = 30
+        curr_node = self.root
+        while i >= 0:
+            curr_bit = (num >> i) & 1
+            if not curr_node.next[curr_bit]:
+                curr_node.next[curr_bit] = TrieNode(curr_bit)
+            curr_node = curr_node.next[curr_bit]
+            i -= 1
+    def search_common_prefix(self):
+        curr_node = self.root
+        res = 0
+        count = 31
+        while curr_node:
+            if curr_node.next[0] and curr_node.next[1]:
+                res = (res << 1) | curr_node.val if curr_node.val is not None else 0
+                res <<= count
+                break
+            elif curr_node.next[0]:
+                curr_node = curr_node.next[0]
+            else:
+                curr_node = curr_node.next[1]
+            count -= 1
+        return res
+
+class Solution:
+    def rangeBitwiseAnd(self, left: int, right: int) -> int:
+        """ trie, prefix tree, my own solution, time out """
+        trie = Trie()
+        for num in range(left, right + 1):
+            trie.insert(num)
+        return trie.search_common_prefix()
+

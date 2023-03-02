@@ -12,6 +12,7 @@ class Solution:
         left = max(nums)
         right = sum(nums)
         def split_nums(nums, max_sum):
+            # greedy algorithm，贪心算法
             # nums 原始数组
             # max_sum 子数组各自的和的最大值
             # return 满足不超过「子数组各自的和的最大值」的分割数

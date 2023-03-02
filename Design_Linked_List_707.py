@@ -11,8 +11,27 @@ class MyLinkedList3:
         self.dummy_head = Node()
         self.count = 0
 
+    def get_node(self, index: int) -> int:
+        # print(index, self.count)
+        if 0 <= index < self.count:
+            steps = index + 1
+            node = self.dummy_head
+            while steps:
+                node = node.next
+                steps -= 1
+            return node
+        elif index == -1:
+            return self.dummy_head
+        return None
 
     def get(self, index: int) -> int:
+        # print(index, self.count)
+        node = get_node(index)
+        if not node:
+            return -1
+        return node.val
+
+    def get1(self, index: int) -> int:
         # print(index, self.count)
         if 0 <= index < self.count:
             steps = index + 1
@@ -30,6 +49,14 @@ class MyLinkedList3:
         self.addAtIndex(self.count, val)
 
     def addAtIndex(self, index: int, val: int) -> None:
+        pre = self.get_node(index - 1)
+        if not pre:
+            return
+        nxt = pre.next
+        pre.next = Node(val, nxt)
+        self.count += 1
+
+    def addAtIndex1(self, index: int, val: int) -> None:
         if 0 <= index <= self.count:
             steps = index
             pre = self.dummy_head
@@ -42,6 +69,13 @@ class MyLinkedList3:
             self.count += 1
 
     def deleteAtIndex(self, index: int) -> None:
+        pre = self.get_node(index - 1)
+        if not pre or not pre.next:
+            return
+        pre.next = pre.next.next
+        self.count -= 1
+
+    def deleteAtIndex1(self, index: int) -> None:
         if 0 <= index <= self.count - 1:
             steps = index
             pre = self.dummy_head
@@ -266,8 +300,93 @@ class MyLinkedList2:
             next_node.prev = prev_node
 
 
+class MyLinkedList:
+    """ 双链表：我自己的解
+    efficient solution
+    """
+
+    def __init__(self, head=ListNode(None), tail=ListNode(None)):
+        """
+        Initialize your data structure here.
+        """
+        self.size = 0
+        # sentinel nodes as pseudo-head and pseudo-tail
+        self.head = head
+        self.tail = tail
+        self.head.next = self.tail
+        self.tail.prev = self.head
+
+    def get_node(self, index: int) -> ListNode:
+        if -1 <= index <= self.size // 2:    
+            pointer = self.head
+            i = 0
+            while i < index + 1:
+                pointer = pointer.next
+                i += 1
+            return pointer
+        elif index <= self.size:
+            pointer = self.tail
+            i = self.size
+            while i > index:
+                pointer = pointer.prev
+                i -= 1
+            return pointer
+        return None
+
+    def get(self, index: int) -> int:
+        """
+        Get the value of the index-th node in the linked list. If the index is invalid, return -1.
+        """
+        node = self.get_node(index)
+        if node is None or node is self.head or node is self.tail:
+            return -1
+        else:
+            return node.val
+
+    def addAtHead(self, val: int) -> None:
+        """
+        Add a node of value val before the first element of the linked list. After the insertion, the new node will be the first node of the linked list.
+        """
+        self.addAtIndex(0, val)
+
+    def addAtTail(self, val: int) -> None:
+        """
+        Append a node of value val to the last element of the linked list.
+        """
+        self.addAtIndex(self.size, val)
+
+    def addAtIndex(self, index: int, val: int) -> None:
+        """
+        Add a node of value val before the index-th node in the linked list. If index equals to the length of linked list, the node will be appended to the end of linked list. If index is greater than the length, the node will not be inserted.
+        """
+        prev_node = self.get_node(index - 1)
+        if not prev_node or prev_node is self.tail:
+            return
+        curr_node = prev_node.next
+        node = ListNode(val)
+        prev_node.next = node
+        node.prev = prev_node
+        node.next = curr_node
+        curr_node.prev = node
+        self.size += 1
+
+    def deleteAtIndex(self, index: int) -> None:
+        """
+        Delete the index-th node in the linked list, if the index is valid.
+        """
+        curr_node = self.get_node(index)
+        if curr_node is None or curr_node is self.head or curr_node is self.tail:
+            return
+        prev_node = curr_node.prev
+        next_node = curr_node.next
+        prev_node.next = next_node
+        next_node.prev = prev_node
+        self.size -= 1
+
+
+
 class MyLinkedList3:
-    """ 双链表： https://leetcode-cn.com/problems/design-linked-list/solution/she-ji-lian-biao-by-leetcode/
+    """ 双链表： https://leetcode.cn/problems/design-linked-list/solution/she-ji-lian-biao-by-leetcode-solution-abix/
     efficient solution
 
     如果你需要经常添加或删除结点，链表可能是一个不错的选择。

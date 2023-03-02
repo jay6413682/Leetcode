@@ -1,6 +1,33 @@
 
 
 class Solution:
+    def getSum(self, a: int, b: int) -> int:
+        """ bit manipulation, my latest try """
+        i = 0
+        carry = 0
+        res = 0
+        while i < 12:
+            curr_a_bit = (a >> i) & 1
+            curr_b_bit = (b >> i) & 1
+            # print(curr_a_bit, curr_b_bit)
+            curr_bit = curr_a_bit ^ curr_b_bit ^ carry
+            res |= (curr_bit << i)
+            if curr_a_bit & curr_b_bit == 1 or curr_a_bit & carry == 1 or curr_b_bit & carry == 1:
+                carry = 1
+            else:
+                carry = 0
+            i += 1
+        # print(res, bin(res), bin(a), bin(b))
+        # 不用把 第 13 位 i = 12 时 carry 加上 result, 因为 这一位 判断 正 负 不需要
+        if res >= 2 ** 11:
+            # 举例：最大和2000 ，res < 2 ^ 11, 最小和 -2000， res > 2 ^ 11
+            # 如果 和 是 0，比如 1 和 -1， res = 0
+            # 如果和 是 -1，比如 1 和 -2， res > 2 ^ 11
+            res = (~res) ^ 0b111111111111
+        return res
+
+
+class Solution:
     """ https://leetcode-cn.com/problems/sum-of-two-integers/solution/python-wei-yun-suan-yi-xie-keng-by-lih/
     将无符号整型结果根据范围判定,映射为有符号整型：比如
     1. 结果 与 0b1111 异或

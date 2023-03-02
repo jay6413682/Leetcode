@@ -30,12 +30,40 @@ class Solution2:
             xk = (num + xk * xk) // 2 // xk
         print(xk)
         return True if xk * xk == num else False
+        '''
+        # or better
+        x0 = num
+        while True:
+            x1 = (x0 + num / x0) / 2
+            if x0 - x1 < 1e-6:
+                break
+            x0 = x1
+        x0 = int(x0)
+        return x0 * x0 == num
+        '''
+        '''
+        # my try
+        prev = 0
+        curr = num
+        while abs(curr - prev) > 10 ** -7:
+            prev = curr
+            curr = (num + curr ** 2) / (2 * curr)
+            #print(curr, prev)
+        #print(int(curr))
+        #print(abs(int(curr) ** 2))
+        if curr - floor(curr - 0.5) <= 1:
+            int_curr = ceil(curr)
+        else:
+            int_curr = floor(curr)
+        #print(int_curr, curr)
+        return abs(int_curr - curr) <= 10 ** -7
+        '''
 
 
 class Solution3:
     def isPerfectSquare(self, num: int) -> bool:
         """ 数学法math
-        公式：1+3+5+7+...(2N−1)=N 2
+        公式：1+3+5+7+...(2N−1)=N^2
         https://leetcode-cn.com/problems/valid-perfect-square/solution/ceng-ceng-di-jin-zhu-bu-zui-you-de-si-chong-jie-fa/
         推导方法：
         (n+1)^2 - n^2 = 2n + 1

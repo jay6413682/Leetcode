@@ -55,3 +55,12 @@ class Solution:
                 break
         mask = (1 << (highbit + 1)) - 1
         return num ^ mask
+        # my lastest try
+        res = 0
+        while num:
+            lsb = num & -num
+            res |= lsb
+            num &= (num - 1)
+        # res == num
+        # e.g. 0000...0001000...000  -->  0000...0000111...111  --> 1111...1111000...000 --> 1111...1111 101...010  --> 0000...0000 010...101
+        return ~(~(lsb << 1 - 1) | res)

@@ -21,6 +21,30 @@ class Solution:
         真值表 -> 逻辑表达式： https://zhuanlan.zhihu.com/p/154529095
         异或逻辑表达式：X ^ Y = ~X & Y | X & ~Y: https://baike.baidu.com/item/%E5%BC%82%E6%88%96/10993677
         """
+        # k 越大 真值表 越麻烦 不好写
+        # k = 3, p = 1
+        nums = [2,2,3,2,4,4,4]
+        x, y = 0, 0
+        for num in nums:
+            y = ~x & ~y & num | ~x & y & ~num
+            x = ~x & ~y & num | x & ~y & ~num
+        return y
+        # k = 4, p = 2
+        nums = [2,2,2,2,3,4,4,4,4,3,5,5,5,5]
+        x, y = 0, 0
+        for num in nums:
+            y_new = ~x & ~y & num | ~x & y & ~num | x & ~y & num | x & y & ~num
+            x = ~x & y & num | x & ~y & ~num | x & ~y & num | x & y & ~num
+            y = y_new
+        return x
+        # k = 3, p = 8 -> 8 % 3 = 2
+        nums = [2,2,3,2,3,4,4,4,3,3,3,3,3,3]
+        x, y = 0, 0
+        for num in nums:
+            y = ~x & ~y & num | ~x & y & ~num
+            x = ~x & ~y & num | x & ~y & ~num
+        return x
+
         twos, ones = 0, 0
         for num in nums:
             ones = ones ^ num & ~twos
@@ -69,6 +93,22 @@ class Solution4:
         因为1111...1101为负数，它的原码为10000...0011 --> -3
 
         """
+        # 通解：k：其他数字的重复数，p single number 的重复数：32位 每一位计数，与k 取模 ，再除以 p 与k 取模 的值，就是这一位的值
+        # nums = [2,2,3,2,3,4,4,4,3,3,3,3,3,3]
+        def generic_single_num(nums, k, p):
+            i = 0
+            res = 0
+            while i < 32:
+                bit_sum = 0
+                for num in nums:
+                    bit_sum += (num >> i) & 1
+                res_curr_bit = (bit_sum % k) // (p % k)
+                res |= res_curr_bit << i
+                i += 1
+            return ~(res ^ 0xffffffff) if res_curr_bit == 1 else res
+        return generic_single_num(nums, 3, 1)
+        # return generic_single_num(nums, 3, 8)
+        
         i = 0
         single_num = 0
         negative = False
@@ -101,6 +141,19 @@ class Solution4:
             
         return res if bit_counters[-1] % 3 != 1 else ~(res ^ 0xffffffff)
         """
+        """
+        # my latest try
+        i = 0
+        res = 0
+        while i < 32:
+            bit_sum = 0
+            for num in nums:
+                bit_sum += (num >> i) & 1
+            res_curr_bit = bit_sum % 3
+            res |= res_curr_bit << i
+            i += 1
+        return ~(res ^ 0xffffffff) if res_curr_bit == 1 else res
+        """
 
 
 class Solution5:
@@ -108,6 +161,8 @@ class Solution5:
         """ 
         通用方法:
         https://leetcode-cn.com/problems/single-number-ii/solution/xiang-xi-tong-su-de-si-lu-fen-xi-duo-jie-fa-by--31/
+        https://leetcode.com/problems/single-number-ii/solutions/43295/Detailed-explanation-and-generalization-of-the-bitwise-operation-method-for-single-numbers/
+        详细见 leetcode_summary word文档
         """
         x1, x2 = 0, 0
         for num in nums:

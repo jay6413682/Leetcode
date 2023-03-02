@@ -26,6 +26,8 @@ class Solution:
             '''
             while 1 <= nums[i] <= n and nums[i] - 1 != i and nums[nums[i] - 1] != nums[i]:
                 nums[nums[i] - 1], nums[i] = nums[i], nums[nums[i] - 1]
+                # 注意不能是 nums[i], nums[nums[i] - 1]  = nums[nums[i] - 1], nums[i]
+                # 因为如果nums[i] 已经被修改了，后面nums[nums[i] - 1] 的 index nums[i] - 1 也变了
             i += 1
         for i, num in enumerate(nums):
             if num - 1 != i:

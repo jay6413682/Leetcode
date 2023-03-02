@@ -21,6 +21,7 @@ class Solution2:
         时间复杂度：O(n)
         空间复杂度：O(1)
         num_sum 其实是记录候选 max_sum ，然后和已有的max_sum 做比较
+        如果前面的数的和是负数，那么对现在的数的作用就是负的，所以要算最大sub array 和就要抛弃前面的数的和
         """
         max_sum = nums[0]
         num_sum = 0

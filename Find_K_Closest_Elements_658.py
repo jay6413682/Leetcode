@@ -17,6 +17,7 @@ class Solution2:
             # 比如 [1,1,2,2,2,2,2,3,3]
             # 3
             # 3
+            # 比如mid = 2，mid + k = 5
             # 造成arr[mid] 离 x 比较近的 错觉
             if x - arr[mid] <= arr[mid + k] - x:
                 right = mid

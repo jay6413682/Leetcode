@@ -11,3 +11,26 @@ class Solution:
             else:
                 right = mid
         return left
+
+
+class Solution:
+    def peakIndexInMountainArray(self, arr: List[int]) -> int:
+        # binary search 二分查找 比较mid 和 right / left 也可以 但是时间复杂度比较高
+        n = len(arr)
+        left = 1
+        right = n - 2
+        while left < right:
+            mid = (left + right + 1) // 2
+            if arr[mid] < arr[left]:
+                right = mid - 1
+            else:
+                left = left + 1
+        '''
+        while left < right:
+            mid = (left + right) // 2
+            if arr[mid] < arr[right]:
+                left = mid + 1
+            else:
+                right = right - 1
+        '''
+        return left

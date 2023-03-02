@@ -18,3 +18,16 @@ class Solution:
                     break
             i += 1
         return res
+        """
+        # my latest try
+        res = set()
+        i = 0
+        n = len(nums)
+        while i < n:
+            while nums[i] != i + 1 and nums[i] != nums[nums[i] - 1]:
+                nums[nums[i] - 1], nums[i] = nums[i], nums[nums[i] - 1]
+            if i != nums[i] - 1 and nums[i] == nums[nums[i] - 1]:
+                res.add(nums[i])
+            i += 1
+        return list(res)
+        """

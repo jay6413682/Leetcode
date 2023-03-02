@@ -200,7 +200,7 @@ class Solution4:
             popped = stack.pop()
             if popped == '(':
                 break
-            if popped.isdigit() or popped.lstrip('-').isdigit():
+            if popped.lstrip('-').isdigit():
                 num = int(popped) * (10 ** digits_count) + num
                 digits_count += 1
             elif popped == '-':
@@ -213,7 +213,7 @@ class Solution4:
                 num = 0
                 digits_count = 0
         total += num
-        stack.extend(str(total).split())
+        stack.append(str(total))
         #print(stack, total)
 
     def calculate(self, s: str) -> int:
@@ -229,3 +229,39 @@ class Solution4:
         #print(stack)
         self._cal_stack(stack)
         return int(stack.pop())
+    '''
+    # 2nd try.
+    def calculate(self, s: str) -> int:
+        def _calc(stack):
+            total = 0
+            num = 0
+            multi = 1
+            while stack:
+                popped = stack.pop()
+                if popped == '(':
+                    break
+                if popped.lstrip('-').isdigit():
+                    num = int(popped) * multi + num
+                    multi *= 10
+                elif popped == '-':
+                    total += (-num)
+                    num = 0
+                    multi = 1
+                elif popped == '+':
+                    total += num
+                    num = 0
+                    multi = 1
+            stack.append(str(total + num))
+
+        stack = []
+        for ch in s:
+            if ch == ' ':
+                continue
+            elif ch == ')':
+                _calc(stack)
+            else:
+                stack.append(ch)
+        #print(stack)
+        _calc(stack)
+        return int(stack.pop())
+    '''

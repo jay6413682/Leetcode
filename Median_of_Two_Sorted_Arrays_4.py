@@ -1,6 +1,74 @@
+class Solution:
+    def findMedianSortedArrays(self, nums1: List[int], nums2: List[int]) -> float:
+        """ 二分查找 binary search 我的最新解，不区分nums1 nums2长短的做法，如果区分长短，cut 一定不会在长nums 的 0 index 左边，或last index 右边，比较简单
+        """
+        n1 = len(nums1)
+        n2 = len(nums2)
+        # cut 在哪个nums1 index前面: left1 -> right1是cut 可能的范围
+        left1 = 0
+        right1 = n1
+        half_size = (n1 + n2) // 2
+        while left1 < right1:
+            mid1 = (left1 + right1 + 1) // 2
+            # cut 左侧 个数 最多 比右侧少 1
+            # mid1 + mid2 = (n1 + n2) // 2
+            mid2 = half_size - mid1
+            # cut 在 nums1 index 0 左側 ，意味着left1 要往右移动
+            # cut 在 nums2 n2 右侧，意味着right2 要向左移动，也就是left1 就要向右
+            # if mid1 < 1 or mid2 > n2:
+            #    left1 = mid1
+            # cut 在 nums2 index  0 左侧，意味着left2 要往右移动，等价于right1 要往左移动
+            # cut 在 nums1 n1 右侧，意味着right1 要向左移动(这个好像不可能，加入left1为 n1,right1 is n1, mid1 == n1)
+            # if mid2 < 0 or mid1 > n1： 
+            #   right1 = mid1 - 1
+            # cut左侧的所有值 要小于等于 右侧所有值
+            # nums1[mid1 - 1] <= nums2[mid2] && nums2[mid2 - 1] <= nums1[mid1]
+            # 他们的反面 nums1[mid1 - 1] > nums2[mid2] || nums2[mid2 - 1] > nums1[mid1]就是不符合条件的cut
+            if mid2 < 0 or (mid1 >= 1 and mid2 < n2 and nums1[mid1 - 1] > nums2[mid2]):  # or mid1 > n1 
+                right1 = mid1 - 1
+            # elif 和 else 可以合併，因為都是關於移動left 邊界的
+            # elif nums2[mid2 - 1] > nums1[mid1]:
+            #    left1 = mid1 + 1
+            else:
+                left1 = mid1
+        #print(left1, half_size - left1)
+        if left1 < 1:
+            # cut 在 nums1 0 index 左侧，pre1 肯定不成立
+            pre1 = float(-inf)
+        else:
+            pre1 = nums1[left1 - 1]
+        if half_size - left1 - 1 < 0:
+            # cut 在 nums2 0 index 左侧，pre2 肯定不成立
+            pre2 = float(-inf)
+        else:
+            pre2 = nums2[half_size - left1 - 1]
+        if left1 >= n1:
+            # cut 在 nums1 last index右侧， after1 肯定不成立
+            after1 = float(inf)
+        else:
+            after1 = nums1[left1]
+        if half_size - left1 < 0:
+            # cut 在 nums2 0 index左侧， after2 肯定不成立
+            after2 = float(-inf)
+        elif half_size - left1 >= n2:
+            # cut 在 nums2 last index右侧， after2 肯定不成立
+            after2 = float(inf)
+        else:
+            after2 = nums2[half_size - left1]
+        pre = max(pre1, pre2)
+        after = min(after1, after2)
+        #print(pre, after)
+        if (n1 + n2) % 2 != 0:
+            return after
+        else:
+            return (pre + after) / 2
+
+
 class Solution3:
     def findMedianSortedArrays(self, nums1: List[int], nums2: List[int]) -> float:
         """ binary search: https://leetcode-cn.com/problems/median-of-two-sorted-arrays/solution/xun-zhao-liang-ge-you-xu-shu-zu-de-zhong-wei-s-114/ 视频
+        這個解法不好記。。。還是看双指针或者我的不区分大小数组的解吧。。。
+        
         18:50 左右讲解有错误，正确描述是：幻灯片里，下面的两种情况不会出现，只可能出现上面的两种情况。
         TrustTheProcess 在https://leetcode-cn.com/problems/median-of-two-sorted-arrays/solution/he-bing-yi-hou-zhao-gui-bing-guo-cheng-zhong-zhao-/ (好像已经删除了) 中的疑問：
         你好，请问 使得 nums1[i - 1] <= nums2[j] && nums2[j - 1] <= nums1[i] 这个条件为什么只取其中一个的反面进行判断呢。
@@ -33,6 +101,7 @@ class Solution3:
         编写代码的逻辑是逐渐排除掉错误的答案，因此编写 if 和 else 的时候对其中一个条件取反就可以了。这种两边向中间夹的过程，可以保证退出循环以后，能找到正确的分割线的位置。
 
         微波炉：这个算法只有在nums1的长度小于等于nums2的长度时才能正确运行，不然在某些用例下（如[1, 3]，[2])while循环中会发生数组索引越界的异常。所以第一步的nums1, nums2 = nums2, nums1不单单是为了缩减搜索范围，更是确保while循环不会发生数组越界访问。如果不想进行第一步的数组交换话，则要在while循环中加上一些必要的逻辑代码来防止发生数组索引越界，这样无论nums1是不是较短的数组，该算法都能正确运行。
+        因为区分长短，假设cut 左边 最多比cut 右边 多 1个数，cut 一定不会在长nums 的 0 index 左边，或last index 右边，比较简单
         
         时间复杂度：O(\log(m+n))O(log(m+n))，其中 mm 和 nn 分别是数组 \textit{nums}_1nums1 和 \textit{nums}_2nums 2的长度。初始时有 k=(m+n)/2k=(m+n)/2 或 k=(m+n)/2+1k=(m+n)/2+1，每一轮循环可以将查找范围减少一半，因此时间复杂度是 O(\log(m+n))O(log(m+n))。
 
@@ -106,6 +175,28 @@ class Solution2:
         总共 8 个变量，所以空间复杂度是 O(1）O(1）。
 
         """
+        # latest try
+        nums1_pointer = 0
+        nums2_pointer = 0
+        n1 = len(nums1)
+        n2 = len(nums2)
+        counter = 0
+        pre = after = None
+        while counter <= (n1 + n2) // 2:
+            pre = after
+            if (nums1_pointer < n1 and nums2_pointer < n2 and nums1[nums1_pointer] < nums2[nums2_pointer]) or nums2_pointer >= n2:
+                
+                after = nums1[nums1_pointer]
+                nums1_pointer += 1
+            else:
+                after = nums2[nums2_pointer]
+                nums2_pointer += 1
+            counter += 1
+        if (n1 + n2) %2 == 0:
+            return (pre +  after) / 2
+        else:
+            return after
+    
         m = len(nums1)
         n = len(nums2)
         i = 0

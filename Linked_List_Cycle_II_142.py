@@ -12,6 +12,22 @@ class Solution2:
     def detectCycle(self, head: ListNode) -> ListNode:
         """ ref: https://leetcode-cn.com/problems/linked-list-cycle-ii/solution/linked-list-cycle-ii-kuai-man-zhi-zhen-shuang-zhi-/
         """
+        # latest try
+        slow = head
+        fast = head
+        while fast and fast.next:
+            slow = slow.next
+            fast = fast.next.next
+            if slow is fast:
+                break
+        if not fast or not fast.next:
+            return
+        new_pointer = head
+        while new_pointer is not slow:
+            slow = slow.next
+            new_pointer = new_pointer.next
+        return slow
+
         if head is None:
             return None
         fast_pointer = slow_pointer = head

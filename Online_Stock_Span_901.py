@@ -19,3 +19,32 @@ class StockSpanner:
             span = self.i
         self.stack.append(self.i)
         return span
+
+class StockSpanner:
+    # 单调栈mono stack 。不初始化0的解
+    def __init__(self):
+        self.stack = []
+        self.nums = []
+    '''
+    # timed out. 
+    def next(self, price: int) -> int:
+        res = 1
+        while self.stack and self.nums[self.stack[-1]] <= price:
+            self.stack.pop()
+            res += 1
+        self.nums.append(price)
+        self.stack = [i for i in range(len(self.nums))]
+        return res
+    '''
+    # my latest try
+    def next(self, price: int) -> int:
+        current_i = len(self.nums)
+        while self.stack and self.nums[self.stack[-1]] <= price:
+            self.stack.pop()
+        self.nums.append(price)
+        if self.stack:
+            res = current_i - self.stack[-1]
+        else:
+            res = current_i + 1
+        self.stack.append(current_i)
+        return res

@@ -1,5 +1,37 @@
 class Solution:
     def minSubArrayLen(self, target: int, nums: List[int]) -> int:
+        """ 我的最新解 sliding window 滑动窗口 超时 根据模版 右侧指针拉动左侧指针 """
+        n = len(nums)
+        left = right = 0
+        res = 0
+        while right < n:
+            while sum(nums[left:right + 1]) >= target:
+                current_len = right - left + 1
+                if res == 0:
+                    res = current_len
+                else:
+                    res = current_len if right - left + 1 < res else res
+                left += 1
+            right += 1
+        return res
+        """ 我的最新优化解 sliding window 滑动窗口 我的优化解 右侧指针拉动左侧指针 """
+        n = len(nums)
+        left = right = 0
+        res = 0
+        s = 0
+        while right < n:
+            s += nums[right]
+            while s >= target:
+                current_len = right - left + 1
+                if res == 0:
+                    res = current_len
+                else:
+                    res = current_len if right - left + 1 < res else res
+                s -= nums[left]
+                left += 1
+            right += 1
+        return res
+        
         """ 二分搜索binary search / prefix sum ： https://leetcode.cn/problems/minimum-size-subarray-sum/solution/by-ac_oier-c5jm/
         prefix sum 包括 0 -> le, sums[0] 是 没有元素的时候的 prefix sum，sums[1]是 i=0 时的 prefix sum
         """

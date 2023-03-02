@@ -5,10 +5,48 @@ class Solution1:
         """ 单调栈，类似 https://leetcode.cn/problems/next-greater-element-i/solution/dong-hua-yan-shi-dan-diao-zhan-496xia-yi-ql65/ 和 https://leetcode.cn/problems/next-greater-element-i/solution/gong-shui-san-xie-yi-ti-shuang-jie-bian-n6nwz/
 
         如果正序遍历，每一个循环，stack 中的数是 nums[i] 左侧比它大的 数，同时单调递减：这个更好理解, 记这个
-        如果逆序遍历，每一个循环，stack 中的数是 nums[i] 右侧比它大的 数，同时单调递减：在头脑中想象，栈就是从右向左由高到低排队的人（相当于栈中数字左右翻转），当nums[i] 大于队中矮的人（栈顶元素），矮人弹出，直到队中都比它高，它再入栈 
-        
+        如果逆序遍历，每一个循环，stack 中的数是 nums[i] 右侧比它大的 数，同时单调递减：在头脑中想象，栈就是从右向左由高到低排队的人（相当于栈中数字左右翻转），
         """
+        def sequential_get_last_smaller_element_map(nums):
+            # 左边第一个小
+            stack = []
+            # num -> index of last smaller element
+            mapping = {}
+            for i in range(len(nums)):
+                while stack and nums[stack[-1]] >= nums[i]:
+                    stack.pop()
+                if stack:
+                    mapping[nums[i]] = nums[-1]
+                stack.append(i)
+            return mapping
+
+        def sequential_get_last_greater_element_map(nums):
+            # 左边第一个大
+            stack = []
+            # num -> index of last greater element
+            mapping = {}
+            for i in range(len(nums)):
+                while stack and nums[stack[-1]] <= nums[i]:
+                    stack.pop()
+                if stack:
+                    mapping[nums[i]] = nums[-1]
+                stack.append(i)
+            return mapping
+        
+        def sequential_get_next_smaller_element_map(nums):
+            # 右边第一个小
+            stack = []
+            # num -> index of next smaller element
+            mapping = {}
+            for i in range(len(nums)):
+                while stack and nums[stack[-1]] > nums[i]:
+                    popped_i = stack.pop()
+                    mapping[nums[popped_i]] = i
+                stack.append(i)
+            return mapping
+        
         def sequential_get_next_greater_element_map(nums):
+            # 右边第一个大
             stack = []
             # num -> index of next greater element
             mapping = {}
@@ -20,6 +58,7 @@ class Solution1:
             return mapping
 
         def reversal_get_next_greater_element_map(nums):
+            # 右边第一个大
             stack = []
             # num -> index of next greater element
             mapping = {}

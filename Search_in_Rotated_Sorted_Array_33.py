@@ -1,3 +1,32 @@
+class Solution:
+    def search(self, nums: List[int], target: int) -> int:
+        """ 二分查找 binary search 我最新的解 mid与left right 都比较的写法，比較麻煩 """
+        n = len(nums)
+        left = 0
+        right = n - 1
+        while left < right:
+            mid = (left + right) // 2
+            if nums[left] <= nums[mid] <= nums[right]:
+                if target > nums[mid]:
+                    left = mid + 1
+                else:
+                    right = mid
+            if nums[mid] < nums[left]:
+                if nums[right] >= target > nums[mid]:
+                    left = mid + 1
+                else:
+                    right = mid
+            if nums[mid] > nums[right]:
+                if nums[mid] < target or target <= nums[right]:
+                    left = mid + 1
+                else:
+                    right = mid
+        print(left)
+        if nums[left] == target:
+            return left
+        return -1
+
+
 class Solution5:
     def search(self, nums: List[int], target: int) -> int:
         """ 最新解，二分查找 binary search. 利用 局部单调性，逐步缩小搜索区间。
@@ -21,6 +50,28 @@ class Solution5:
                 else:
                     left = mid + 1
         return left if nums[left] == target else -1
+        '''
+        # my latest try, compare mid with left
+        n = len(nums)
+        left = 0
+        right = n - 1
+        while left < right:
+            mid = (left + right + 1) // 2
+            if nums[mid] >= nums[left]:
+                if nums[left] <= target < nums[mid]:
+                    right = mid - 1
+                else:
+                    left = mid
+            else:
+                if nums[mid] <= target <= nums[right]:
+                    left = mid
+                else:
+                    right = mid - 1
+        #print(left)
+        if nums[left] == target:
+            return left
+        return -1
+        '''
                 
 
 class Solution4:

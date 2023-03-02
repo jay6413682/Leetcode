@@ -18,7 +18,7 @@ class ListNode:
 
 class SolutionOne:
     def mergeTwoLists(self, l1: ListNode, l2: ListNode) -> ListNode:
-        """ 双指针
+        """ 双指针 https://leetcode.cn/problems/merge-two-sorted-lists/solution/he-bing-liang-ge-you-xu-lian-biao-by-leetcode-solu/
         时间复杂度：O(n + m)O(n+m) ，其中 nn 和 mm 分别为两个链表的长度。因为每次循环迭代中，l1 和 l2 只有一个元素会被放进合并链表中， 因此 while 循环的次数不会超过两个链表的长度之和。所有其他操作的时间复杂度都是常数级别的，因此总的时间复杂度为 O(n+m)O(n+m)。
 
         空间复杂度：O(1)O(1) 。我们只需要常数的空间存放若干变量。

@@ -23,6 +23,7 @@ class Solution:
 情况 2：否则，如果 mid 看到的数值大于等于 target，那么 mid 可能是「插入元素的位置」，mid 的右边一定不存在「插入元素的位置」。如果 mid 的左边不存在「插入元素的位置」，我们才可以说 mid 是「插入元素的位置」。因此下一轮搜索区间是 [left..mid]，下一轮把 right 移动到 mid 位置，因此设置 right = mid。
 说明：上面的两点中，「情况 2」其实不用分析得那么细致， 因为只要「情况 1」的区间分析是正确的，「情况 2」一定是「情况 1」得到的区间的反面区间。
             '''
+            # mid 不可能 为 len(nums)，否则left 一定 已经 == right 了 比如 1,2,3 , mid = 2, right = 3, left = 2, 无论nums[mid] < target 还是 nums[mid] >= target, left 都会 == right，然后break the loop
             if nums[mid] < target:
                 left = mid + 1
             else:

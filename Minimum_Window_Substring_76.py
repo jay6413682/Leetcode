@@ -1,3 +1,66 @@
+
+class Solution:
+    def minWindow(self, s: str, t: str) -> str:
+        """ 我的最新解，根据模版，先移动右指针带动左指针，超时，但是比较好记 """
+        t_chr_counts = defaultdict(int)
+        for c in t:
+            t_chr_counts[c] += 1
+        #print(t_chr_counts)
+        def is_t_in_str(string, t_chr_counts):
+            t_chr_counts_copy = {c : t_chr_counts[c] for c in t_chr_counts}
+            for c in string:
+                if t_chr_counts_copy.get(c, 0) != 0:
+                    t_chr_counts_copy[c] -= 1
+            #print(t_chr_counts_copy)
+            for i, j in t_chr_counts_copy.items():
+                if j != 0:
+                    return False
+            return True
+        n = len(s)
+        left = right = 0
+        res = ''
+        while right < n:
+            while is_t_in_str(s[left:right + 1], t_chr_counts):
+                #print('dddd')
+                if res == '':
+                    res = s[left:right + 1]
+                else:
+                    res = s[left:right + 1] if right - left + 1 < len(res) else res
+                left += 1
+            right += 1
+        return res
+
+        """ 我的解 优化解 先移动右指针带动左指针 面试的时候不一定写的出来 """
+        t_chr_counts = defaultdict(int)
+        for c in t:
+            t_chr_counts[c] += 1
+        # print(t_chr_counts)
+        n = len(s)
+        left = right = 0
+        res = ''
+        def is_t_in_sub_str(t_chr_counts):
+            for i, j in t_chr_counts.items():
+                if j > 0:
+                    return False
+            return True
+        while right < n:
+            if s[right] in t_chr_counts:
+                t_chr_counts[s[right]] -= 1
+            while left <= right:
+                # print(s[left:right + 1])
+                if not is_t_in_sub_str(t_chr_counts):
+                    break
+                if res == '':
+                    res = s[left:right + 1]
+                else:
+                    res = s[left:right + 1] if right - left + 1 < len(res) else res
+                if s[left] in t_chr_counts:
+                    t_chr_counts[s[left]] += 1
+                    # print(s[left], t_chr_counts)
+                left += 1
+            right += 1
+        return res
+
 from _collections import deque, defaultdict
 class Solution2:
     def minWindow(self, s: str, t: str) -> str:

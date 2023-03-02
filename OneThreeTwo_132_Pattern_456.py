@@ -39,6 +39,7 @@ class Solution2:
     def find132pattern(self, nums: List[int]) -> bool:
         """ 单调栈 https://leetcode-cn.com/problems/132-pattern/solution/xiang-xin-ke-xue-xi-lie-xiang-jie-wei-he-95gt/
         Azson comment：官方题解讲得太多了，没看懂，这个看懂了 说下理解，就是单调栈维护的是3，max_k维护的是2，枚举的是1， max_k来源与单调栈，所以其索引一定大于栈顶的元素，但其值一定小于栈顶元素，故栈顶元素就是3，即找到了对“32”。 于是当出现nums[i] < max_k时，即找到了"12"，这个时候一定会有3个元素的，而栈顶3必定大于2，故也大于1，即满足“132”
+        利用了单调栈，但是并不是 求next greater value，这是单调栈不同的一种应用
         """
         stack = deque()
         k = - 10 ** 9 - 1
@@ -49,6 +50,38 @@ class Solution2:
             while stack and stack[-1] < nums[i]:
                 k = max(stack.pop(), k)
             stack.append(nums[i])
+        return False
+
+        # my latest try
+        n = len(nums)
+        # stack ：非绝对单调递减栈，j 值 为stack[0]
+        stack = []
+        # k 值
+        max_k_val = float(-inf)
+        for i in range(n - 1, -1, -1):
+            while stack and nums[stack[-1]] < nums[i]:
+                max_k_val = max(nums[stack.pop()], max_k_val)
+            if stack and nums[i] < max_k_val:
+                return True
+            stack.append(i)
+        return False
+
+        # 跟方法三一样，只是k 从前往后loop
+        n = len(nums)
+        mi = [nums[0]]
+        for num in nums[1:]:
+            mi.append(min(mi[-1], num))
+        # mi: 前缀最小值, i 来自其中
+        # stack：绝对单调递减栈 for j
+        stack = []
+        # k 值
+        for k in range(1, n):
+            while stack and nums[stack[-1]] <= nums[k]:
+                stack.pop()
+            # stack[-1] -> j
+            if stack and nums[k] > mi[stack[-1] - 1]:
+                return True
+            stack.append(k)
         return False
 
 

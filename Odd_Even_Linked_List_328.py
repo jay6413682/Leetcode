@@ -41,6 +41,29 @@ class Solution:
         p1.next = h2
         return h1
         """
+        """
+        # my latest try
+        if not head or not head.next:
+            return head
+        odd_pointer = odd_head = head
+        even_pointer = even_head = head.next
+        while True:
+            if even_pointer:
+                next_odd = even_pointer.next
+            else:
+                odd_pointer.next = even_head
+                break
+            if next_odd:
+                next_even = next_odd.next
+            else:
+                odd_pointer.next = even_head
+                break
+            odd_pointer.next = next_odd
+            even_pointer.next = next_even
+            odd_pointer = odd_pointer.next
+            even_pointer = even_pointer.next
+        return odd_head
+        """
 
     def oddEvenList2(self, head: ListNode) -> ListNode:
         """ https://leetcode-cn.com/problems/odd-even-linked-list/solution/kuai-lai-wu-nao-miao-dong-qi-ou-lian-biao-by-sweet/ """

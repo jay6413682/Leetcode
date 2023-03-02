@@ -16,6 +16,7 @@ class Solution:
 class Solution2:
     def maxProfit(self, prices: List[int]) -> int:
         """ 贪心 https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-ii/solution/tan-xin-suan-fa-by-liweiwei1419-2/
+        求 单增区间和
         """
         max_profit = 0
         for i in range(len(prices) - 1):

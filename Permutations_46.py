@@ -75,6 +75,7 @@ class Solution2:
         res = []
         path = []
         depth = 0
+        # optional, 用空间换时间 if num in path: 复杂度 高
         used = [False for _ in range(len(nums))]
         dfs(nums, depth, path, used, res)
         return res
@@ -99,3 +100,26 @@ class Solution2:
         return res
         '''
 
+
+class Solution:
+    def permute(self, nums: List[int]) -> List[List[int]]:
+        # my bfs solution, 类似 https://leetcode.cn/problems/permutations/solution/si-chong-fang-fa-dfs-bfs-dong-tai-gui-hu-3mt3/
+        if not nums:
+            return nums
+        queue = deque()
+        n = len(nums)
+        for num in nums:
+            queue.append([num])
+        res = []
+        while queue:
+            path = queue.popleft()
+            if len(path) == n:
+                res.append(path)
+                continue
+            for num in nums:
+                if num in path:
+                    continue
+                path.append(num)
+                queue.append(path.copy())
+                path.pop()
+        return res

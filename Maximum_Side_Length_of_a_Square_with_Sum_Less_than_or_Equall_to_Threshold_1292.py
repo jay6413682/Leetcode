@@ -2,6 +2,7 @@ class Solution:
     def maxSideLength(self, mat: List[List[int]], threshold: int) -> int:
         """ binary search/二分答案/二维前缀和（Prefix Sum）解法类似 https://leetcode.cn/problems/maximum-side-length-of-a-square-with-sum-less-than-or-equal-to-threshold/solution/qing-xi-tu-jie-mo-neng-de-qian-zhui-he-by-hlxing/ extra101 的comment 
         https://leetcode.cn/problems/maximum-side-length-of-a-square-with-sum-less-than-or-equal-to-threshold/solution/yuan-su-he-xiao-yu-deng-yu-yu-zhi-de-zheng-fang-2/ 
+        求最大的边 使得最小和 <= 4
         区别在于 我的解中 prefix_sum[i][j] 是包含 mat[i][j] 的前缀和，而其他解 prefix_sum[i][j] 其实对应的是 包含mat[i-1][j-1]的前缀和，这就造成我下面解法要做很多判断
         """
         width = len(mat[0])
